@@ -1095,7 +1095,7 @@ class content{
 			//$text		:	the help text to show into the popup
 
 			if(!$image || !file_exists($image)){
-				$image = e_IMAGE."admin_images/docs_16.png";
+				$image = $plugindir."admin_images/docs_16.png";
 			}
 			if(!$width){ $width = "320"; }
 			if(!$title){ $title = "content management help area"; }
