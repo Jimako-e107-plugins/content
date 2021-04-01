@@ -1469,7 +1469,13 @@ function show_content_item()
 										$CUSTOM_TAGS = TRUE;
 										$CONTENT_CONTENT_TABLE_CUSTOM_KEY		= $tp->toHTML($ck, true);
 										$CONTENT_CONTENT_TABLE_CUSTOM_VALUE		= $tp->toHTML($vv, true);
-										$CONTENT_CONTENT_TABLE_CUSTOM_TAGS		.= preg_replace("/\{(.*?)\}/e", '$\1', $CONTENT_CONTENT_TABLE_CUSTOM);
+										 
+										$fanat1k_tmp = $CONTENT_CONTENT_TABLE_CUSTOM;				
+										preg_match_all("/\{(.*?)\}/", $fanat1k_tmp, $matches);				
+												for($i = 0; $i < count($matches[1]); $i++){				
+																	$fanat1k_tmp = str_replace("{{$matches[1][$i]}}", ${$matches[1][$i]}, $fanat1k_tmp);				
+															}			
+										$CONTENT_CONTENT_TABLE_CUSTOM_TAGS = $fanat1k_tmp; 
 									}
 								}
 							}
@@ -1484,7 +1490,12 @@ function show_content_item()
 									$CUSTOM_TAGS = TRUE;
 									$CONTENT_CONTENT_TABLE_CUSTOM_KEY		= $tp->toHTML($key, true);
 									$CONTENT_CONTENT_TABLE_CUSTOM_VALUE		= $tp->toHTML($v, true);
-									$CONTENT_CONTENT_TABLE_CUSTOM_TAGS		.= preg_replace("/\{(.*?)\}/e", '$\1', $CONTENT_CONTENT_TABLE_CUSTOM);
+									$fanat1k_tmp = $CONTENT_CONTENT_TABLE_CUSTOM;				
+									preg_match_all("/\{(.*?)\}/", $fanat1k_tmp, $matches);				
+											for($i = 0; $i < count($matches[1]); $i++){				
+																$fanat1k_tmp = str_replace("{{$matches[1][$i]}}", ${$matches[1][$i]}, $fanat1k_tmp);				
+														}			
+									$CONTENT_CONTENT_TABLE_CUSTOM_TAGS = $fanat1k_tmp; 
 								}
 							}
 						}
