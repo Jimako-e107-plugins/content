@@ -19,7 +19,7 @@
 require_once("../../class2.php");
 if (!isset($pref['plug_installed']['content']))
 {
-	header('location:'.e_BASE.'index.php');
+	e107::redirect();
 	exit;
 }
 
@@ -35,7 +35,7 @@ $eArrayStorage = new ArrayData();
 require_once(e_HANDLER."file_class.php");
 $fl = new e_file;
 
-require_once(e_HANDLER."calendar/calendar_class.php");
+require_once($plugindir."handlers/calendar/calendar_class.php");
 $cal = new DHTML_Calendar(true);
 
 require_once($plugindir."handlers/content_class.php");

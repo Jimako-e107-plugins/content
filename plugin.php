@@ -23,7 +23,7 @@ include_lan(e_PLUGIN.'content/languages/'.e_LANGUAGE.'/lan_content_admin.php');
 
 // Plugin info -------------------------------------------------------------------------------------------------------
 $eplug_name = "CONTENT_PLUGIN_LAN_1";
-$eplug_version = "1.24";
+$eplug_version = "1.25";
 $eplug_author = "Eric Vanderfeesten (lisa)";
 $eplug_logo = "";
 $eplug_url = "http://eindhovenseschool.net";

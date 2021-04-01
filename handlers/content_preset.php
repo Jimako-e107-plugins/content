@@ -97,7 +97,7 @@ if(isset($_POST['addpreset']))
 				}
 				break;
 			default :
-				header('location:'.e_BASE.'index.php');
+				e107::redirect();
 				exit();
 		}
 	}

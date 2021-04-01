@@ -19,7 +19,7 @@
 if (!defined('e107_INIT')) { exit; }
 if (!isset($pref['plug_installed']['content']))
 {
-	header('location:'.e_BASE.'index.php');
+	e107::redirect();
 	exit;
 }
 

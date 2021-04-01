@@ -19,7 +19,7 @@
 if (!defined('e107_INIT')) { exit; }
 if (!isset($pref['plug_installed']['content']))
 {
-	header('location:'.e_BASE.'index.php');
+	e107::redirect();
 	exit;
 }
 
@@ -1358,7 +1358,7 @@ class contentform
 						<tr>
 						<td class='forumheader3' style='width:5%; text-align:center'>".$cid."</td>
 						<td class='forumheader3' style='width:5%; text-align:center'>".($row['content_icon'] ? "<img src='".$caticon."' alt='' style='width:50px; vertical-align:middle' />" : "&nbsp;")."</td>
-						<td class='forumheader3' style='width:10%; text-align:left'>".($authordetails[0] != "0" ? "<a href='".e_BASE."user.php?id.".$authordetails[0]."'>".CONTENT_ICON_USER."</a>" : "")." ".$authordetails[1]."</td>
+						<td class='forumheader3' style='width:10%; text-align:left'>".($authordetails[0] != "0" ? "<a href='".e_HTTP."user.php?id.".$authordetails[0]."'>".CONTENT_ICON_USER."</a>" : "")." ".$authordetails[1]."</td>
 						<td class='forumheader3' style='width:70%; text-align:left;'>
 							<a href='".$plugindir."content.php?content.".$row['content_id']."'>".CONTENT_ICON_LINK."</a>
 							".$row['content_heading']." ".($row['content_subheading'] ? "[".$row['content_subheading']."]" : "")."</td>
@@ -1431,7 +1431,7 @@ class contentform
 					</td>
 					<td class='forumheader3' style='width:15%; text-align:left'>".$mainparentheading."</td>
 					<td class='forumheader3' style='width:15%; text-align:left'>
-						".($authordetails[0] != "0" ? "<a href='".e_BASE."user.php?id.".$authordetails[0]."'>".CONTENT_ICON_USER."</a>" : "")."	".$authordetails[1]."
+						".($authordetails[0] != "0" ? "<a href='".e_HTTP."user.php?id.".$authordetails[0]."'>".CONTENT_ICON_USER."</a>" : "")."	".$authordetails[1]."
 					</td>
 					<td class='forumheader3' style='width:75%; text-align:left;'>
 						".$row['content_heading']." ".($row['content_subheading'] ? "<br />[".$row['content_subheading']."]" : "")."
@@ -1507,7 +1507,7 @@ class contentform
 						<tr>
 						<td class='".$class."' style='width:5%; text-align:left'>".$catid."</td>
 						<td class='".$class."' style='width:5%; text-align:center'>".($row['content_icon'] ? "<img src='".$caticon."' alt='' style='vertical-align:middle' />" : "&nbsp;")."</td>
-						<td class='".$class."' style='width:15%'>".($authordetails[0] != "0" ? "<a href='".e_BASE."user.php?id.".$authordetails[0]."'>".CONTENT_ICON_USER."</a>" : "")." ".$authordetails[1]."</td>
+						<td class='".$class."' style='width:15%'>".($authordetails[0] != "0" ? "<a href='".e_HTTP."user.php?id.".$authordetails[0]."'>".CONTENT_ICON_USER."</a>" : "")." ".$authordetails[1]."</td>
 						<td class='".$class."' style='width:65%;'>
 							 <a href='".$plugindir."content.php?cat.".$row['content_id']."'>".CONTENT_ICON_LINK."</a>
 							".$pre.$row['content_heading']." ".($row['content_subheading'] ? "[".$row['content_subheading']."]" : "")."
@@ -2176,7 +2176,7 @@ class contentform
 						<tr>
 							<td class='".$class."' style='width:5%; text-align:left'>".$catid."</td>
 							<td class='".$class."' style='width:5%; text-align:center'>".($row['content_icon'] ? "<img src='".$caticon."' alt='' style='vertical-align:middle' />" : "&nbsp;")."</td>
-							<td class='".$class."' style='width:15%'>".($authordetails[0] != "0" ? "<a href='".e_BASE."user.php?id.".$authordetails[0]."'>".CONTENT_ICON_USER."</a>" : "")." ".$authordetails[1]."</td>
+							<td class='".$class."' style='width:15%'>".($authordetails[0] != "0" ? "<a href='".e_HTTP."user.php?id.".$authordetails[0]."'>".CONTENT_ICON_USER."</a>" : "")." ".$authordetails[1]."</td>
 							<td class='".$class."' style='width:50%;'>
 								<a href='".$plugindir."content.php?cat.".$row['content_id']."'>".CONTENT_ICON_LINK."</a>
 								".$pre.$row['content_heading']." ".($row['content_subheading'] ? "[".$row['content_subheading']."]" : "")." ".$amount."
@@ -2292,7 +2292,7 @@ class contentform
 						<tr>
 							<td class='forumheader3' style='width:5%; text-align:center; white-space:nowrap;'>".$cid."</td>
 							<td class='forumheader3' style='width:15%; text-align:left; white-space:nowrap;'>
-								".($authordetails[0] != "0" ? "<a href='".e_BASE."user.php?id.".$authordetails[0]."'>".CONTENT_ICON_USER."</a>" : "")." ".$authordetails[1]."
+								".($authordetails[0] != "0" ? "<a href='".e_HTTP."user.php?id.".$authordetails[0]."'>".CONTENT_ICON_USER."</a>" : "")." ".$authordetails[1]."
 							</td>
 							<td class='forumheader3' style='width:70%; text-align:left;'>
 								<a href='".$plugindir."content.php?content.".$row['content_id']."'>".CONTENT_ICON_LINK."</a>
@@ -2376,7 +2376,7 @@ class contentform
 					<tr>
 						<td class='forumheader3' style='width:5%; text-align:left'>".$row['content_id']."</td>
 						<td class='forumheader3' style='width:5%; text-align:center'>".($row['content_icon'] ? "<img src='".$caticon."' alt='' style='vertical-align:middle' />" : "&nbsp;")."</td>
-						<td class='forumheader3' style='width:15%'>".($authordetails[0] != "0" ? "<a href='".e_BASE."user.php?id.".$authordetails[0]."'>".CONTENT_ICON_USER."</a>" : "")." ".$authordetails[1]."</td>
+						<td class='forumheader3' style='width:15%'>".($authordetails[0] != "0" ? "<a href='".e_HTTP."user.php?id.".$authordetails[0]."'>".CONTENT_ICON_USER."</a>" : "")." ".$authordetails[1]."</td>
 						<td class='forumheader3' style='width:65%;'>
 							<a href='".$plugindir."content.php?cat.".$row['content_id']."'>".CONTENT_ICON_LINK."</a>
 							".$row['content_heading']." ".($row['content_subheading'] ? "[".$row['content_subheading']."]" : "")."

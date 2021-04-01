@@ -537,7 +537,7 @@ $authordetails = $aa -> getAuthor($row['content_author']);
 $CONTENT_SEARCHRESULT_TABLE_AUTHORDETAILS = $authordetails[1];
 if(USER){
 	if(is_numeric($authordetails[3])){
-		$CONTENT_SEARCHRESULT_TABLE_AUTHORDETAILS .= " <a href='".e_BASE."user.php?id.".$authordetails[0]."' title='".CONTENT_LAN_40."'>".CONTENT_ICON_USER."</a>";
+		$CONTENT_SEARCHRESULT_TABLE_AUTHORDETAILS .= " <a href='".e_HTTP."user.php?id.".$authordetails[0]."' title='".CONTENT_LAN_40."'>".CONTENT_ICON_USER."</a>";
 	}else{
 		$CONTENT_SEARCHRESULT_TABLE_AUTHORDETAILS .= " ".CONTENT_ICON_USER;
 	}

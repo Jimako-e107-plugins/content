@@ -19,7 +19,7 @@
 if (!defined('e107_INIT')) { exit; }
 if (!isset($pref['plug_installed']['content']))
 {
-	header('location:'.e_BASE.'index.php');
+	e107::redirect();
 	exit;
 }
 
@@ -633,13 +633,13 @@ class content{
 				if(array_key_exists($parent, $arr)){
 					$sep = (isset($content_pref["content_breadcrumb_seperator"]) ? $content_pref["content_breadcrumb_seperator"] : ">");
 					if($content_pref["content_breadcrumb_base"] && isset($content_pref["content_breadcrumb_base"])){
-						$crumb .= "<a href='".e_BASE."'>".CONTENT_LAN_58."</a> ".$sep." ";
+						$crumb .= "<a href='".e_HTTP."'>".CONTENT_LAN_58."</a> ".$sep." ";
 					}
 					if($content_pref["content_breadcrumb_self"] && isset($content_pref["content_breadcrumb_self"])){
-						$crumb .= "<a href='".e_SELF."'>".CONTENT_LAN_59."</a> ".$sep." ";
+						$crumb .= "<a href='".e_HTTP."'>".CONTENT_LAN_59."</a> ".$sep." ";
 					}
 					for($i=0;$i<count($arr[$parent]);$i++){
-						$crumb .= "<a href='".e_SELF."?cat.".$arr[$parent][$i]."'>".$arr[$parent][$i+1]."</a> ".$sep." ";
+						$crumb .= "<a href='".e_HTTP."?cat.".$arr[$parent][$i]."'>".$arr[$parent][$i+1]."</a> ".$sep." ";
 						$i++;
 					}
 				}
@@ -1076,7 +1076,7 @@ class content{
 						$authorinfo = $authordetails[1];
 					}
 					if(USER && is_numeric($authordetails[0]) && $authordetails[0] != "0" && isset($content_pref["content_{$mode}_authorprofile"]) && $content_pref["content_{$mode}_authorprofile"]){
-						$authorinfo .= " <a href='".e_BASE."user.php?id.".$authordetails[0]."' title='".CONTENT_LAN_40."'>".CONTENT_ICON_USER."</a>";
+						$authorinfo .= " <a href='".e_HTTP."user.php?id.".$authordetails[0]."' title='".CONTENT_LAN_40."'>".CONTENT_ICON_USER."</a>";
 					}
 				}
 				if(isset($content_pref["content_{$mode}_authoricon"]) && $content_pref["content_{$mode}_authoricon"]){

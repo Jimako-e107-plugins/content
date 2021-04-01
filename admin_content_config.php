@@ -18,7 +18,11 @@
 
 require_once("../../class2.php");
 
-if(!isset($pref['plug_installed']['content']) || !getperms("P")){header("location:".e_BASE."index.php"); exit; }
+if(!isset($pref['plug_installed']['content']) || !getperms("P"))
+{
+	e107::redirect(); 
+	exit; 
+}
 $e_sub_cat = 'content';
 $e_wysiwyg = "content_text,cat_text";
 $plugindir = e_PLUGIN."content/";
@@ -27,7 +31,8 @@ include_lan($plugindir.'languages/'.e_LANGUAGE.'/lan_content_admin.php');
 
 include_lan($plugindir.'languages/'.e_LANGUAGE.'/lan_content.php');
 
-require_once(e_HANDLER."calendar/calendar_class.php");
+require_once($plugindir."handlers/calendar/calendar_class.php");
+
 $cal = new DHTML_Calendar(true);
 
 if(e_QUERY){

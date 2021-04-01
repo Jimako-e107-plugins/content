@@ -19,7 +19,7 @@
 require_once('../../class2.php');
 if (!isset($pref['plug_installed']['content']))
 {
-	header('location:'.e_BASE.'index.php');
+	e107::redirect();
 	exit;
 }
 
@@ -60,8 +60,10 @@ require_once(HEADERF);
 //post comment
 if(isset($_POST['commentsubmit'])){
 	if(!is_object($sql)){ $sql = new db; }
-	if(!$sql -> db_Select($plugintable, "content_comment", "content_id='".intval($qs[1])."' ")){
-		header("location:".e_BASE."index.php"); exit;
+	if(!$sql -> db_Select($plugintable, "content_comment", "content_id='".intval($qs[1])."' "))
+	{
+		e107::redirect();
+		exit;
 	}else{
 		$row = $sql -> db_Fetch();
 		if(ANON === TRUE || USER === TRUE){
