@@ -121,7 +121,7 @@ class contentdb
 		$_POST['content_subheading']	= $tp -> toDB($_POST['content_subheading']);
 		$_POST['content_summary']		= $tp -> toDB($_POST['content_summary']);
 
-		if(e_WYSIWYG)
+		if(e107::getPref('wysiwyg',false)!==false)
 		{
 			$_POST['content_text']		= $tp->createConstants($_POST['content_text']); // convert e107_images/ to {e_IMAGE} etc.
 		}

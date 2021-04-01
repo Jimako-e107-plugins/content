@@ -1207,7 +1207,7 @@ class contentform
 
 		function show_manage_content($mode, $userid="", $username=""){
 			global $qs, $sql, $ns, $rs, $aa, $plugintable, $plugindir, $tp, $eArrayStorage;
-
+ 
 			if($mode != "contentmanager"){
 				//category parent
 				global $TOPIC_TOPIC, $TOPIC_FIELD, $TOPIC_ROW_NOEXPAND;
@@ -1286,12 +1286,13 @@ class contentform
 					$qryletter	= "";
 				}
 			}
-
+		 
 			$text = "";
 			// -------- SHOW FIRST LETTERS FIRSTNAMES ------------------------------------
-			if(!is_object($sql)){ $sql = new db; }
-			$distinctfirstletter = $sql -> db_Select($plugintable, " DISTINCT(content_heading) ", "content_refer != 'sa' AND ".$qryfirst." ".$qryuser." ORDER BY content_heading ASC ");
-			while($row = $sql -> db_Fetch()){
+            $records = e107::getDb()->retrieve($plugintable, " DISTINCT(content_heading) ", "content_refer != 'sa' AND ".$qryfirst." ".$qryuser." ORDER BY content_heading ASC ", true);
+
+			$distinctfirstletter = count($records);
+			foreach($records as $row) {
 				$head = $tp->toHTML($row['content_heading'], TRUE);
 				if(ord($head) < 128) {
 					$head_sub = strtoupper(substr($head,0,1));
@@ -2051,9 +2052,10 @@ class contentform
 		$content_contentmanager_table_string = "";
 		foreach($catarray as $catid)
 		{
-			if($sql -> db_Select($plugintable, "content_id, content_heading, content_pref", " content_id='".intval($catid)."' "))
+			$row = e107::getDb()->retrieve($plugintable, "content_id, content_heading, content_pref", " content_id='".intval($catid)."'  LIMIT 1" );
+			if($row)
 			{
-				$row = $sql -> db_Fetch(MYSQL_ASSOC);
+				 
 				$content_pref = $eArrayStorage->ReadArray($row['content_pref']);
 				if( (isset($content_pref["content_manager_approve"]) && ($content_pref["content_manager_approve"] != e_UC_PUBLIC) && check_class($content_pref["content_manager_approve"]))
 				|| (isset($content_pref["content_manager_personal"]) && ($content_pref["content_manager_personal"] != e_UC_PUBLIC) && check_class($content_pref["content_manager_personal"]))

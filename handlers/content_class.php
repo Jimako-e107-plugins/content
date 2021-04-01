@@ -536,7 +536,7 @@ class content{
 			global $agc;
 
 			if($parent){
-				$agc = "";
+				$agc = array();
 				$qrygc = " content_id = '".intval($parent)."' ";
 			}else{
 				$qrygc = " content_parent = '0' ";
@@ -548,12 +548,11 @@ class content{
 			if($classcheck == TRUE){
 				$qrygc .= " AND content_class REGEXP '".e_CLASS_REGEXP."' ";
 			}
-
 			$datequery		= " AND content_datestamp < ".time()." AND (content_enddate=0 || content_enddate>".time().") ";
 
-			$sqlgetcat = new db;
-			if($sqlgetcat -> db_Select($plugintable, "content_id, content_heading, content_parent", " ".$qrygc." ".$datequery." " )){
-				while($row = $sqlgetcat -> db_Fetch()){
+			if($records = e107::getDb()->retrieve($plugintable, "content_id, content_heading, content_parent", " WHERE ".$qrygc." ".$datequery." ", true  ))
+			 	{ 
+				foreach($records AS $row) { 
 					if($agc){
 						if($row['content_parent'] != "0"){
 							if(array_key_exists(substr($row['content_parent'],2), $agc)){
@@ -1546,9 +1545,10 @@ class content{
 				$qry .= " content_id='".$catid."' || ";
 			}
 			$qry = substr($qry,0,-3);
-			if($sql -> db_Select($plugintable, "content_id, content_heading, content_pref", $qry))
+			$records = e107::getDb()->retrieve($plugintable, "content_id, content_heading, content_pref", $qry, true);
+			if($records)
 			{
-				while($row = $sql -> db_Fetch(MYSQL_ASSOC))
+				foreach($records as $row)  
 				{
 					if(isset($row['content_pref']) && $row['content_pref'])
 					{

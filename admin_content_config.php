@@ -73,8 +73,11 @@ if(isset($_POST['delete']))
 
 if(isset($delete) && $delete == 'cat'){
 
-	$sql -> db_Select($plugintable, "content_id,content_heading,content_parent", "content_id = '$del_id' ");
-	list($content_id, $content_heading, $content_parent) = $sql -> db_Fetch();
+	$row = e107::getDb() -> retrieve($plugintable, "content_id,content_heading,content_parent", "WHERE content_id = '$del_id' ");
+
+	$content_id = $row['content_id'];
+	$content_heading = $row['content_heading'];
+	$content_parent = $row['content_parent'];
 
 	$checkarray = $aa -> getCategoryTree("", $content_id, TRUE);
 	unset($agc);	//unset the globalised getCategoryTree array
@@ -139,8 +142,7 @@ if(isset($_POST['updateoptions'])){
 if(isset($_POST['updateinherit'])){
 	foreach($_POST['id'] as $k=>$v){
 		//get current
-		$sql -> db_Select($plugintable, "content_pref", "content_id='".intval($k)."' ");
-		$row = $sql -> db_Fetch();
+		$row =  e107::getDb()->retrieve($plugintable, "content_pref", "content_id='".intval($k)."' LIMIT 1");
 		$content_pref = $eArrayStorage->ReadArray($row['content_pref']);
 		//assign or remove inherit option
 		if(isset($_POST['content_inherit']) && isset($_POST['content_inherit'][$k]) ){
@@ -507,8 +509,8 @@ function admin_content_config_adminmenu()
 					$var['menu']['text']			= CONTENT_ADMIN_MENU_LAN_14;
 
 					$sql = new db;
-					$category_total			= $sql -> db_Select($plugintable, "content_heading", "content_id='".$qs[1]."' ");
-					list($content_heading)	= $sql -> db_Fetch();
+					
+					$content_heading = e107::getDb()->retrieve($plugintable, "content_heading", "content_id='".$qs[1]."' LIMIT 1");
 
 					show_admin_menu(CONTENT_ADMIN_MENU_LAN_6.": ".$content_heading."", $act, $var, TRUE);
 
@@ -526,18 +528,22 @@ function admin_content_config_adminmenu()
 				}else{
 						
 						if($showadmincat){
-							$sql2 = new db;
-							if($category_total = $sql2 -> db_Select($plugintable, "content_id, content_heading", "content_parent='0' ")){
-								while($row = $sql2 -> db_Fetch()){
+							if($records = e107::getDb()->retrieve($plugintable, "content_id, content_heading", "content_parent='0' ", true)){
+								$category_total = count($records);
+								foreach($records as $row) {
 
 									unset($var);
 									$var=array();
 
 									$array		= $aa -> getCategoryTree("", $row['content_id'], FALSE);	//get all categories from each main parent
-									$newarray	= array_merge_recursive($array);
-
+									$count_newarray = 0;
+									if (is_array($array)) {
+										$newarray	= array_merge_recursive($array);
+										$count_newarray = count($newarray);
+									}
 									$newparent=array();
-									for($a=0;$a<count($newarray);$a++){
+
+									for($a=0;$a<$count_newarray;$a++){
 										for($b=0;$b<count($newarray[$a]);$b++){
 											$newparent[$newarray[$a][$b]] = $newarray[$a][$b+1];
 											$b++;
