@@ -461,11 +461,11 @@ class contentdb
 			}
 
 			if($mode == "create"){
-				$sql -> db_Insert($plugintable, "'0', '".$_POST['cat_heading']."', '".$_POST['cat_subheading']."', '', '".$_POST['cat_text']."', '".ADMINID."', '".$tp->toDB($_POST["cat_icon"])."', '', '', '".$_POST['parent']."', '".intval($_POST['cat_comment'])."', '".intval($_POST['cat_rate'])."', '".intval($_POST['cat_pe'])."', '', '".$starttime."', '".$endtime."', '".$_POST['cat_class']."', '', '0', '0', '', '' ");
+				$mysql_insert_id = e107::getDB()-> db_Insert($plugintable, "'0', '".$_POST['cat_heading']."', '".$_POST['cat_subheading']."', '', '".$_POST['cat_text']."', '".ADMINID."', '".$tp->toDB($_POST["cat_icon"])."', '', '', '".$_POST['parent']."', '".intval($_POST['cat_comment'])."', '".intval($_POST['cat_rate'])."', '".intval($_POST['cat_pe'])."', '', '".$starttime."', '".$endtime."', '".$_POST['cat_class']."', '', '0', '0', '', '' ");
 
 				// check and insert default pref values if new main parent + create menu file
 				if($_POST['parent'] == "0"){
-					$iid = mysql_insert_id();
+					$iid = $mysql_insert_id ;
 					$content_pref = $aa -> getContentPref($iid);
 					$aa -> CreateParentMenu($iid);
 				}
