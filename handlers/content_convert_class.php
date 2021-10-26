@@ -90,7 +90,7 @@ class content_convert{
 			if($sqlc -> db_Select("core", "*", "e107_name='pcontent' ")){
 				$row = $sqlc -> db_Fetch();
 
-				$tmp = $eArrayStorage->ReadArray($row['e107_value']);
+				$tmp = e107::unserialize($row['e107_value']);
 
 				//replace the id value for the content_pref
 				$content_pref = array();
@@ -106,7 +106,7 @@ class content_convert{
 					//add new options to the preferences
 					$content_pref = $this->upgrade_1_22_prefs($content_pref);
 
-					$tmp1 = $eArrayStorage->WriteArray($content_pref);
+					$tmp1 = e107::serialize($content_pref);
 					$sqld -> db_Update("core", "e107_value = '{$tmp1}' WHERE e107_name = 'pcontent' ");
 				}else{
 					$upgrade=FALSE;
@@ -118,7 +118,7 @@ class content_convert{
 				while($row=$sqlc->db_Fetch()){
 
 					$id = $row['content_id'];
-					$tmp = $eArrayStorage->ReadArray($row['content_pref']);
+					$tmp = e107::unserialize($row['content_pref']);
 
 					//replace the id value for the content_pref
 					$l = strlen($id);
@@ -135,7 +135,7 @@ class content_convert{
 					if(!isset($content_pref['content_admin_subheading'])){
 						$content_pref = $this->upgrade_1_22_prefs($content_pref);
 
-						$tmp1 = $eArrayStorage->WriteArray($content_pref);
+						$tmp1 = e107::serialize($content_pref);
 						$sqld -> db_Update("pcontent", "content_pref='{$tmp1}' WHERE content_id='$id' ");
 					}else{
 						$upgrade=FALSE;
@@ -209,13 +209,13 @@ class content_convert{
 			if($sqlc -> db_Select("core", "*", "e107_name='pcontent' ")){
 				$row = $sqlc -> db_Fetch();
 
-				$content_pref = $eArrayStorage->ReadArray($row['e107_value']);
+				$content_pref = e107::unserialize($row['e107_value']);
 
 				//add new options to the preferences
 				if(!isset($content_pref['content_admin_subheading'])){
 					$content_pref = $this->upgrade_1_23_prefs($content_pref);
 
-					$tmp1 = $eArrayStorage->WriteArray($content_pref);
+					$tmp1 = e107::serialize($content_pref);
 					$sqld -> db_Update("core", "e107_value = '{$tmp1}' WHERE e107_name = 'pcontent' ");
 				}else{
 					$upgrade=FALSE;
@@ -227,13 +227,13 @@ class content_convert{
 				while($row=$sqlc->db_Fetch()){
 
 					$id = $row['content_id'];
-					$content_pref = $eArrayStorage->ReadArray($row['content_pref']);
+					$content_pref = e107::unserialize($row['content_pref']);
 
 					if(!isset($content_pref['content_admin_subheading'])){
 						//add new options to the preferences
 						$content_pref = $this->upgrade_1_23_prefs($content_pref);
 
-						$tmp1 = $eArrayStorage->WriteArray($content_pref);
+						$tmp1 = e107::serialize($content_pref);
 						$sqld -> db_Update("pcontent", "content_pref='{$tmp1}' WHERE content_id='$id' ");
 					}else{
 						$upgrade=FALSE;
@@ -280,7 +280,7 @@ class content_convert{
 			if($sqlc -> db_Select("core", "*", "e107_name='pcontent' ")){
 				$row = $sqlc -> db_Fetch();
 
-				$content_pref = $eArrayStorage->ReadArray($row['e107_value']);
+				$content_pref = e107::unserialize($row['e107_value']);
 
 				//update theme
 				if(strpos($content_pref['content_theme'], "{e_")!==FALSE){
@@ -288,7 +288,7 @@ class content_convert{
 					$content_pref['content_theme'] = "{e_PLUGIN}content/templates/".$content_pref['content_theme']."/";
 				}
 
-				$tmp1 = $eArrayStorage->WriteArray($content_pref);
+				$tmp1 = e107::serialize($content_pref);
 				$sqld -> db_Update("core", "e107_value = '{$tmp1}' WHERE e107_name = 'pcontent' ");
 			}
 
@@ -297,7 +297,7 @@ class content_convert{
 				while($row=$sqlc->db_Fetch()){
 
 					$id = $row['content_id'];
-					$content_pref = $eArrayStorage->ReadArray($row['content_pref']);
+					$content_pref = e107::unserialize($row['content_pref']);
 
 					//update theme
 					if(strpos($content_pref['content_theme'], "{e_")!==FALSE){
@@ -305,7 +305,7 @@ class content_convert{
 						$content_pref['content_theme'] = "{e_PLUGIN}content/templates/".$content_pref['content_theme']."/";
 					}
 
-					$tmp1 = $eArrayStorage->WriteArray($content_pref);
+					$tmp1 = e107::serialize($content_pref);
 					$sqld -> db_Update("pcontent", "content_pref='{$tmp1}' WHERE content_id='$id' ");
 				}
 			}
@@ -425,7 +425,7 @@ class content_convert{
 				}
 
 				$content_pref = $aa -> ContentDefaultPrefs($id);
-				$tmp = $eArrayStorage->WriteArray($content_pref);
+				$tmp = e107::serialize($content_pref);
 
 				$sql -> db_Update($plugintable, "content_pref='$tmp' WHERE content_id='$id' ");
 		}

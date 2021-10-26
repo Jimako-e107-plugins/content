@@ -105,7 +105,7 @@ function print_item_pdf($id){
 	$img						= $tp -> parseTemplate('{CONTENT_PDF_IMAGES}', FALSE, $content_shortcodes);
 
 	//add custom and preset tags if present
-	$custom						= $eArrayStorage->ReadArray($row['content_pref']);
+	$custom						= e107::unserialize($row['content_pref']);
 	$months = array(CONTENT_ADMIN_DATE_LAN_0, CONTENT_ADMIN_DATE_LAN_1, CONTENT_ADMIN_DATE_LAN_2, CONTENT_ADMIN_DATE_LAN_3, CONTENT_ADMIN_DATE_LAN_4, CONTENT_ADMIN_DATE_LAN_5, CONTENT_ADMIN_DATE_LAN_6, CONTENT_ADMIN_DATE_LAN_7, CONTENT_ADMIN_DATE_LAN_8, CONTENT_ADMIN_DATE_LAN_9, CONTENT_ADMIN_DATE_LAN_10, CONTENT_ADMIN_DATE_LAN_11);
 
 	$CONTENT_CONTENT_TABLE_CUSTOM_TAGS = "";

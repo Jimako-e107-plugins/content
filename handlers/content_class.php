@@ -392,12 +392,12 @@ class content{
 					//if those are not present, insert the default ones given in this file
 					if ($num_rows == 0) {
 						$content_pref = $this -> ContentDefaultPrefs();
-						$tmp = $eArrayStorage->WriteArray($content_pref);
+						$tmp = e107::serialize($content_pref);
 						$sql -> db_Insert("core", "'$plugintable', '{$tmp}' ");
 						$sql -> db_Select("core", "*", "e107_name='$plugintable' ");
 					}
 					$row = $sql -> db_Fetch();
-					$content_pref = $eArrayStorage->ReadArray($row['e107_value']);
+					$content_pref = e107::unserialize($row['e107_value']);
 					
 					//create array of custom preset tags
 					foreach($content_pref['content_custom_preset_key'] as $ck => $cv){
@@ -412,12 +412,12 @@ class content{
 					}
 
 					//finally we can store the new default prefs into the db
-					$tmp1 = $eArrayStorage->WriteArray($content_pref);
+					$tmp1 = e107::serialize($content_pref);
 					$sql -> db_Update($plugintable, "content_pref='{$tmp1}' WHERE content_id='$id' ");
 					$sql -> db_Select($plugintable, "content_pref", "content_id='$id' ");
 					$row = $sql -> db_Fetch();
 				}
-				$content_pref = $eArrayStorage->ReadArray($row['content_pref']);
+				$content_pref = e107::unserialize($row['content_pref']);
 
 				if(e_PAGE == "admin_content_config.php" && isset($qs[0]) && $qs[0] == 'option'){
 				}else{
@@ -425,7 +425,7 @@ class content{
 					if(isset($content_pref['content_inherit']) && $content_pref['content_inherit']!=''){
 						$sql -> db_Select("core", "*", "e107_name='$plugintable' ");
 						$row = $sql -> db_Fetch();
-						$content_pref = $eArrayStorage->ReadArray($row['e107_value']);
+						$content_pref = e107::unserialize($row['e107_value']);
 					}
 				}
 
@@ -433,12 +433,12 @@ class content{
 				$num_rows = $sql -> db_Select("core", "*", "e107_name='$plugintable' ");
 				if ($num_rows == 0) {
 					$content_pref = $this -> ContentDefaultPrefs();
-					$tmp = $eArrayStorage->WriteArray($content_pref);
+					$tmp = e107::serialize($content_pref);
 					$sql -> db_Insert("core", "'$plugintable', '{$tmp}' ");
 					$sql -> db_Select("core", "*", "e107_name='$plugintable' ");
 				}
 				$row = $sql -> db_Fetch();
-				$content_pref = $eArrayStorage->ReadArray($row['e107_value']);
+				$content_pref = e107::unserialize($row['e107_value']);
 			}
 			return $content_pref;
 		}
@@ -466,7 +466,7 @@ class content{
 				//first get the existing prefs and parent
 				$sql -> db_Select($plugintable, "content_pref, content_parent", "content_id='".intval($id)."' ");
 				$row = $sql -> db_Fetch();
-				$current = $eArrayStorage->ReadArray($row['content_pref']);
+				$current = e107::unserialize($row['content_pref']);
 				$currentparent = $row['content_parent'];
 
 				//if we are updating options
@@ -512,7 +512,7 @@ class content{
 			}
 
 			//create new array of preferences
-			$tmp = $eArrayStorage->WriteArray($content_pref);
+			$tmp = e107::serialize($content_pref);
 
 			//update core table
 			if($id == "0"){
@@ -1546,13 +1546,16 @@ class content{
 			}
 			$qry = substr($qry,0,-3);
 			$records = e107::getDb()->retrieve($plugintable, "content_id, content_heading, content_pref", $qry, true);
+            
+            
 			if($records)
 			{
 				foreach($records as $row)  
 				{
-					if(isset($row['content_pref']) && $row['content_pref'])
+                    
+                   	if(isset($row['content_pref']) && $row['content_pref'])
 					{
-						$content_pref = $eArrayStorage->ReadArray($row['content_pref']);
+						$content_pref = e107::unserialize($row['content_pref']);
 					}
 					if( (isset($content_pref["content_manager_approve"]) && ($content_pref["content_manager_approve"] != e_UC_PUBLIC) && check_class($content_pref["content_manager_approve"])) 
 					|| (isset($content_pref["content_manager_personal"]) && ($content_pref["content_manager_personal"] != e_UC_PUBLIC) && check_class($content_pref["content_manager_personal"])) 

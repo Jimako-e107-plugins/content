@@ -37,8 +37,7 @@ require_once($plugindir."handlers/content_form_class.php");
 $aform = new contentform;
 require_once(e_HANDLER."file_class.php");
 $fl = new e_file;
-e107_require_once(e_HANDLER.'arraystorage_class.php');
-$eArrayStorage = new ArrayData();
+ 
 
 //these have to be set for the tinymce wysiwyg
 $e_wysiwyg	= "content_text";
@@ -97,7 +96,7 @@ if(!isset($qs[0])){
 		while($row = $sql -> db_Fetch()){
 			if(!is_object($sql2)){ $sql2 = new db; }
 
-			$content_pref					= $eArrayStorage->ReadArray($row['content_pref']);
+			$content_pref					= e107::unserialize($row['content_pref']);
 			$content_pref["content_cat_icon_path_large"] = ($content_pref["content_cat_icon_path_large"] ? $content_pref["content_cat_icon_path_large"] : "{e_PLUGIN}content/images/cat/48/" );
 			$content_pref["content_cat_icon_path_small"] = ($content_pref["content_cat_icon_path_small"] ? $content_pref["content_cat_icon_path_small"] : "{e_PLUGIN}content/images/cat/16/" );
 			$content_cat_icon_path_large	= $tp -> replaceConstants($content_pref["content_cat_icon_path_large"]);

@@ -35,8 +35,7 @@ require_once(e_HANDLER."form_handler.php");
 $rs = new form;
 require_once($plugindir."handlers/content_class.php");
 $aa = new content;
-e107_require_once(e_HANDLER.'arraystorage_class.php');
-$eArrayStorage = new ArrayData();
+ 
 include_lan($plugindir."languages/".e_LANGUAGE."/lan_content.php");
 
 if(e_QUERY)
@@ -289,7 +288,7 @@ function CachePost($cachestring=''){
 
 // ##### CONTENT TYPE LIST ------------------------------
 function show_content(){
-		global $qs, $content_shortcodes, $ns, $plugintable, $sql, $aa, $e107cache, $tp, $pref, $content_pref, $content_cat_icon_path_large, $content_cat_icon_path_small, $datequery, $content_icon_path, $eArrayStorage, $contenttotal, $row;
+		global $qs, $content_shortcodes, $ns, $plugintable, $sql, $aa, $e107cache, $tp, $pref, $content_pref, $content_cat_icon_path_large, $content_cat_icon_path_small, $datequery, $content_icon_path, $contenttotal, $row;
 
 		if(is_readable(e_THEME.$pref['sitetheme']."/content/content_type_template.php")){
 			require_once(e_THEME.$pref['sitetheme']."/content/content_type_template.php");
@@ -315,7 +314,7 @@ function show_content(){
 			{
 				if(!is_object($sql2)){ $sql2 = new db; }
 
-				$content_pref = $eArrayStorage->ReadArray($row['content_pref']);
+				$content_pref = e107::unserialize($row['content_pref']);
 				$content_pref["content_cat_icon_path_large"] = ($content_pref["content_cat_icon_path_large"] ? $content_pref["content_cat_icon_path_large"] : "{e_PLUGIN}content/images/cat/48/" );
 				$content_pref["content_cat_icon_path_small"] = ($content_pref["content_cat_icon_path_small"] ? $content_pref["content_cat_icon_path_small"] : "{e_PLUGIN}content/images/cat/16/" );
 				$content_cat_icon_path_large	= $tp->replaceConstants($content_pref["content_cat_icon_path_large"]);
@@ -336,7 +335,7 @@ function show_content(){
 			if($sql3 -> db_Select($plugintable, "content_id, content_pref", "content_parent = '0' ".$datequery." ORDER BY content_parent")){
 				while($row = $sql3 -> db_Fetch()){
 					if(isset($row['content_pref']) && $row['content_pref']){
-						$content_pref = $eArrayStorage->ReadArray($row['content_pref']);
+						$content_pref = e107::unserialize($row['content_pref']);
 					}
 					if($content_pref["content_submit"] && check_class($content_pref["content_submit_class"])){
 						$submit = TRUE;
@@ -1089,7 +1088,7 @@ function show_content_top(){
 // ##### TOP SCORE LIST -----------------------------------
 function show_content_score(){
 		global $qs, $plugindir, $content_shortcodes, $ns, $plugintable, $sql, $aa, $e107cache, $tp, $pref, $cobj, $content_icon_path;
-		global $from, $datequery, $content_pref, $mainparent, $eArrayStorage, $CONTENT_SCORE_TABLE_SCORE, $CONTENT_SCORE_TABLE_AUTHOR, $authordetails, $row, $thisratearray;
+		global $from, $datequery, $content_pref, $mainparent,   $CONTENT_SCORE_TABLE_SCORE, $CONTENT_SCORE_TABLE_AUTHOR, $authordetails, $row, $thisratearray;
 
 		$mainparent		= $aa -> getMainParent(intval($qs[1]));
 		$content_pref	= $aa -> getContentPref($mainparent);
@@ -1362,7 +1361,7 @@ function show_content_item()
 				$CONTENT_CONTENT_TABLE_TEXT		= $tp -> replaceConstants($CONTENT_CONTENT_TABLE_TEXT);
 				$CONTENT_CONTENT_TABLE_TEXT		= $tp -> toHTML($CONTENT_CONTENT_TABLE_TEXT, TRUE, "BODY");
 
-				$custom							= $eArrayStorage->ReadArray($row['content_pref']);
+				$custom							= e107::unserialize($row['content_pref']);
 
 				$date	= $tp -> parseTemplate('{CONTENT_CONTENT_TABLE_DATE}', FALSE, $content_shortcodes);
 				$auth	= $tp -> parseTemplate('{CONTENT_CONTENT_TABLE_AUTHORDETAILS}', FALSE, $content_shortcodes);

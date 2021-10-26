@@ -322,7 +322,7 @@ class contentdb
 				$custom['content_custom_presettags'] = $tp->toDB($_POST['content_custom_preset_key']);
 			}
 			if($custom){
-				$contentprefvalue = $eArrayStorage->WriteArray($custom);
+				$contentprefvalue = e107::serialize($custom);
 			}else{
 				$contentprefvalue = "";
 			}
@@ -496,7 +496,7 @@ class contentdb
 				$row = $sql -> db_Fetch();
 
 				//get current preferences
-				$content_pref = $eArrayStorage->ReadArray($row['content_pref']);
+				$content_pref = e107::unserialize($row['content_pref']);
 
 				//assign new preferences
 				if($value == "clear"){
@@ -506,7 +506,7 @@ class contentdb
 				}
 				
 				//create new array of preferences
-				$tmp = $eArrayStorage->WriteArray($content_pref);
+				$tmp = e107::serialize($content_pref);
 
 				$sql -> db_Update($plugintable, "content_pref = '{$tmp}' WHERE content_id = '".intval($id)."' ");
 
