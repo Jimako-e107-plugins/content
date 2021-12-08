@@ -322,7 +322,7 @@ class contentdb
 				$custom['content_custom_presettags'] = $tp->toDB($_POST['content_custom_preset_key']);
 			}
 			if($custom){
-				$contentprefvalue = e107::serialize($custom);
+				$contentprefvalue = e107::serialize($custom, TRUE);
 			}else{
 				$contentprefvalue = "";
 			}
@@ -405,7 +405,7 @@ class contentdb
 
 			$_POST['cat_heading']		= $tp -> toDB($_POST['cat_heading']);
 			$_POST['cat_subheading']	= $tp -> toDB($_POST['cat_subheading']);
-			if(e_WYSIWYG){
+			if(defined("e_WYSIWYG") && e_WYSIWYG == TRUE){
 				$_POST['cat_text']		= $tp->createConstants($_POST['cat_text']); // convert e107_images/ to {e_IMAGE} etc.
 			}
 			$_POST['cat_text']			= $tp -> toDB($_POST['cat_text']);
@@ -506,7 +506,7 @@ class contentdb
 				}
 				
 				//create new array of preferences
-				$tmp = e107::serialize($content_pref);
+				$tmp = e107::serialize($content_pref, TRUE);
 
 				$sql -> db_Update($plugintable, "content_pref = '{$tmp}' WHERE content_id = '".intval($id)."' ");
 

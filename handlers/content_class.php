@@ -392,7 +392,7 @@ class content{
 					//if those are not present, insert the default ones given in this file
 					if ($num_rows == 0) {
 						$content_pref = $this -> ContentDefaultPrefs();
-						$tmp = e107::serialize($content_pref);
+						$tmp = e107::serialize($content_pref, TRUE);
 						$sql -> db_Insert("core", "'$plugintable', '{$tmp}' ");
 						$sql -> db_Select("core", "*", "e107_name='$plugintable' ");
 					}
@@ -412,7 +412,7 @@ class content{
 					}
 
 					//finally we can store the new default prefs into the db
-					$tmp1 = e107::serialize($content_pref);
+					$tmp1 = e107::serialize($content_pref, TRUE);
 					$sql -> db_Update($plugintable, "content_pref='{$tmp1}' WHERE content_id='$id' ");
 					$sql -> db_Select($plugintable, "content_pref", "content_id='$id' ");
 					$row = $sql -> db_Fetch();
@@ -433,7 +433,7 @@ class content{
 				$num_rows = $sql -> db_Select("core", "*", "e107_name='$plugintable' ");
 				if ($num_rows == 0) {
 					$content_pref = $this -> ContentDefaultPrefs();
-					$tmp = e107::serialize($content_pref);
+					$tmp = e107::serialize($content_pref, TRUE);
 					$sql -> db_Insert("core", "'$plugintable', '{$tmp}' ");
 					$sql -> db_Select("core", "*", "e107_name='$plugintable' ");
 				}
@@ -510,10 +510,10 @@ class content{
 					$content_pref[$k] = $tp->toDB($v);
 				}
 			}
-
+ 
 			//create new array of preferences
-			$tmp = e107::serialize($content_pref);
-
+			$tmp = e107::serialize($content_pref, TRUE);
+ 
 			//update core table
 			if($id == "0"){
 				$sql -> db_Update("core", "e107_value = '{$tmp}' WHERE e107_name = '$plugintable' ");

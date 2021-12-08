@@ -1,7 +1,10 @@
 <?php
 if (!defined('e107_INIT')) { exit; }
+
 include_once(e_HANDLER.'shortcode_handler.php');
 $content_shortcodes = $tp -> e_sc -> parse_scbatch(__FILE__);
+
+
 /*
 
 SC_BEGIN CONTENT_NEXTPREV
@@ -911,7 +914,7 @@ foreach($imagestmp as $key => $value) {
 $images = array_values($imagestmp);
 $content_image_popup_name = $row['content_heading'];
 $CONTENT_CONTENT_TABLE_IMAGES = "";
-require_once(e_HANDLER."popup_handler.php");
+require_once(e_PLUGIN."content/popup/popup_handler.php");
 $pp = new popup;
 $gen = new convert;
 $datestamp = preg_replace("# -.*#", "", $gen -> convert_date($row['content_datestamp'], "long"));

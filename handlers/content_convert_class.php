@@ -106,7 +106,7 @@ class content_convert{
 					//add new options to the preferences
 					$content_pref = $this->upgrade_1_22_prefs($content_pref);
 
-					$tmp1 = e107::serialize($content_pref);
+					$tmp1 = e107::serialize($content_pref, TRUE);
 					$sqld -> db_Update("core", "e107_value = '{$tmp1}' WHERE e107_name = 'pcontent' ");
 				}else{
 					$upgrade=FALSE;
@@ -135,7 +135,7 @@ class content_convert{
 					if(!isset($content_pref['content_admin_subheading'])){
 						$content_pref = $this->upgrade_1_22_prefs($content_pref);
 
-						$tmp1 = e107::serialize($content_pref);
+						$tmp1 = e107::serialize($content_pref, TRUE);
 						$sqld -> db_Update("pcontent", "content_pref='{$tmp1}' WHERE content_id='$id' ");
 					}else{
 						$upgrade=FALSE;
@@ -215,7 +215,7 @@ class content_convert{
 				if(!isset($content_pref['content_admin_subheading'])){
 					$content_pref = $this->upgrade_1_23_prefs($content_pref);
 
-					$tmp1 = e107::serialize($content_pref);
+					$tmp1 = e107::serialize($content_pref, TRUE);
 					$sqld -> db_Update("core", "e107_value = '{$tmp1}' WHERE e107_name = 'pcontent' ");
 				}else{
 					$upgrade=FALSE;
@@ -233,7 +233,7 @@ class content_convert{
 						//add new options to the preferences
 						$content_pref = $this->upgrade_1_23_prefs($content_pref);
 
-						$tmp1 = e107::serialize($content_pref);
+						$tmp1 = e107::serialize($content_pref, TRUE);
 						$sqld -> db_Update("pcontent", "content_pref='{$tmp1}' WHERE content_id='$id' ");
 					}else{
 						$upgrade=FALSE;
@@ -288,7 +288,7 @@ class content_convert{
 					$content_pref['content_theme'] = "{e_PLUGIN}content/templates/".$content_pref['content_theme']."/";
 				}
 
-				$tmp1 = e107::serialize($content_pref);
+				$tmp1 = e107::serialize($content_pref, TRUE);
 				$sqld -> db_Update("core", "e107_value = '{$tmp1}' WHERE e107_name = 'pcontent' ");
 			}
 
@@ -305,7 +305,7 @@ class content_convert{
 						$content_pref['content_theme'] = "{e_PLUGIN}content/templates/".$content_pref['content_theme']."/";
 					}
 
-					$tmp1 = e107::serialize($content_pref);
+					$tmp1 = e107::serialize($content_pref, TRUE);
 					$sqld -> db_Update("pcontent", "content_pref='{$tmp1}' WHERE content_id='$id' ");
 				}
 			}
@@ -425,7 +425,7 @@ class content_convert{
 				}
 
 				$content_pref = $aa -> ContentDefaultPrefs($id);
-				$tmp = e107::serialize($content_pref);
+				$tmp = e107::serialize($content_pref, TRUE);
 
 				$sql -> db_Update($plugintable, "content_pref='$tmp' WHERE content_id='$id' ");
 		}
