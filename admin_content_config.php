@@ -18,30 +18,26 @@
 
 require_once("../../class2.php");
 
-if(!isset($pref['plug_installed']['content']) || !getperms("P"))
+if (!e107::isInstalled('content'))
 {
-	e107::redirect(); 
-	exit; 
+	e107::redirect();
 }
 $e_sub_cat = 'content';
 $e_wysiwyg = "content_text,cat_text";
 $plugindir = e_PLUGIN."content/";
+$plugindir_abs = e_PLUGIN_ABS."content/";
 
 include_lan($plugindir.'languages/'.e_LANGUAGE.'/lan_content_admin.php');
 
 include_lan($plugindir.'languages/'.e_LANGUAGE.'/lan_content.php');
-
-require_once($plugindir."handlers/calendar/calendar_class.php");
-
-$cal = new DHTML_Calendar(true);
 
 if(e_QUERY){
 	$qs = explode(".", e_QUERY);
 }
 
 require_once(e_ADMIN."auth.php");
-require_once(e_HANDLER."form_handler.php");
-$rs = new form;
+require_once($plugindir."handlers/form_handler.php");
+$rs = new oldform;
 
 
 
@@ -54,14 +50,16 @@ require_once($plugindir."handlers/content_form_class.php");
 $aform = new contentform;
 require_once(e_HANDLER."file_class.php");
 $fl = new e_file;
- 
+//e107_require_once(e_HANDLER.'arrayxstorage_class.php');
+//$eArrayStorage = new ArrayData();
 
 global $tp;
 $deltest = array_flip($_POST);
 
 // check query
 
-
+$sql = e107::getDb();
+ 	 
 if(isset($_POST['delete']))
 {
 	$tmp = array_pop(array_flip($_POST['delete']));
@@ -71,13 +69,12 @@ if(isset($_POST['delete']))
 // ##### DB ---------------------------------------------------------------------------------------
 
 if(isset($delete) && $delete == 'cat'){
-
-	$row = e107::getDb() -> retrieve($plugintable, "content_id,content_heading,content_parent", "WHERE content_id = '$del_id' ");
-
-	$content_id = $row['content_id'];
-	$content_heading = $row['content_heading'];
-	$content_parent = $row['content_parent'];
-
+ 
+	$row = $sql -> retrieve($plugintable, "content_id,content_heading,content_parent", "WHERE content_id = '$del_id' ");
+  $content_id = $row['content_id'];
+  $content_heading = $row['content_heading'];
+  $content_parent = $row['content_parent'];
+ 
 	$checkarray = $aa -> getCategoryTree("", $content_id, TRUE);
 	unset($agc);	//unset the globalised getCategoryTree array
 	$checkvalidparent = implode(",", array_keys($checkarray));
@@ -92,7 +89,7 @@ if(isset($delete) && $delete == 'cat'){
 		$checkermsg .= CONTENT_ADMIN_CAT_LAN_39."<br />";
 		$checksubcat = FALSE;
 	}
-
+					
 	//check if items present
 	if($sql -> db_Count($plugintable, "(*)", "WHERE ".$checkqry." ")){
 		//items found, don't delete
@@ -102,9 +99,10 @@ if(isset($delete) && $delete == 'cat'){
 		$checkermsg .= CONTENT_ADMIN_CAT_LAN_38."<br />";
 		$checkitems = FALSE;
 	}
-
+ 
 	if($checksubcat == FALSE && $checkitems == FALSE){
-		if($sql -> db_Delete($plugintable, "content_id='$del_id' ")){
+		if($sql -> delete($plugintable, "content_id='$del_id' ")){
+ 
 			@unlink(e_PLUGIN."content/menus/content_".$content_heading."_menu.php");
 			$message = CONTENT_ADMIN_CAT_LAN_23."<br />";
 		}
@@ -141,16 +139,22 @@ if(isset($_POST['updateoptions'])){
 if(isset($_POST['updateinherit'])){
 	foreach($_POST['id'] as $k=>$v){
 		//get current
-		$row =  e107::getDb()->retrieve($plugintable, "content_pref", "content_id='".intval($k)."' LIMIT 1");
-		$content_pref = e107::unserialize(row['content_pref']);
+		$sql -> db_Select($plugintable, "content_pref", "content_id='".intval($k)."' ");
+		$row = $sql -> db_Fetch();
+ 
+		//$content_pref = $eArrayStorage->ReadxArray($row['content_pref']);
+		$content_pref = e107::unserialize($row['content_pref']);
 		//assign or remove inherit option
 		if(isset($_POST['content_inherit']) && isset($_POST['content_inherit'][$k]) ){
 			$content_pref['content_inherit'] = "1";
 		}else{
 			unset($content_pref['content_inherit']);
 		}
+ 
 		//update
-		$tmp = e107::serialize($content_pref);
+		//$tmp = $eArrayStorage->WritexArray($content_pref);
+		$tmp = e107::serialize($content_pref, true);
+	            
 		$sql2 -> db_Update($plugintable, "content_pref='{$tmp}' WHERE content_id='".intval($k)."' ");
 	}
 	$message		= CONTENT_ADMIN_CAT_LAN_22."<br /><br />";
@@ -194,7 +198,8 @@ if(isset($_POST['uploadcaticon'])){
 }
 
 if(isset($_POST['create_category'])){
-	if($_POST['cat_heading'] && $_POST['parent1'] != "none"){
+  
+	if($_POST['cat_heading'] && $_POST['parent1'] != "none"){       
 		$adb -> dbCategory("create");
 	}else{
 		$message	= CONTENT_ADMIN_ITEM_LAN_0;
@@ -245,7 +250,7 @@ if(isset($message)){
 
 // ##### End --------------------------------------------------------------------------------------
 
-if(!e_QUERY){																//show main categories
+if(!e_QUERY){							 								//show main categories
 	$aform -> show_manage_content("", "", "");
 	require_once(e_ADMIN."footer.php");
 	exit;
@@ -265,7 +270,7 @@ if(!e_QUERY){																//show main categories
 			$message .= CONTENT_ADMIN_ITEM_LAN_88." <a href='".e_SELF."?content.create.".$mainparent."'>".CONTENT_ADMIN_ITEM_LAN_90."</a><br />";
 			$message .= CONTENT_ADMIN_ITEM_LAN_89." <a href='".e_SELF."?content.".$mainparent."'>".CONTENT_ADMIN_ITEM_LAN_90."</a><br />";
 			$message .= CONTENT_ADMIN_ITEM_LAN_91." <a href='".e_SELF."?content.edit.".$qs[2]."'>".CONTENT_ADMIN_ITEM_LAN_90."</a><br />";
-			$message .= CONTENT_ADMIN_ITEM_LAN_124." <a href='".e_PLUGIN."content/content.php?content.".$qs[2]."'>".CONTENT_ADMIN_ITEM_LAN_90."</a>";
+			$message .= CONTENT_ADMIN_ITEM_LAN_124." <a href='".e_PLUGIN_ABS."content/content.php?content.".$qs[2]."'>".CONTENT_ADMIN_ITEM_LAN_90."</a>";
 			
 			$ns -> tablerender("", "<div style='text-align:center'><b>".$message."</b></div>");
 			require_once(e_ADMIN."footer.php");
@@ -282,7 +287,7 @@ if(!e_QUERY){																//show main categories
 			$message .= CONTENT_ADMIN_ITEM_LAN_88." <a href='".e_SELF."?content.create.".$mainparent."'>".CONTENT_ADMIN_ITEM_LAN_90."</a><br />";
 			$message .= CONTENT_ADMIN_ITEM_LAN_89." <a href='".e_SELF."?content.".$mainparent."'>".CONTENT_ADMIN_ITEM_LAN_90."</a><br />";
 			$message .= CONTENT_ADMIN_ITEM_LAN_91." <a href='".e_SELF."?content.edit.".$qs[2]."'>".CONTENT_ADMIN_ITEM_LAN_90."</a><br />";
-			$message .= CONTENT_ADMIN_ITEM_LAN_124." <a href='".e_PLUGIN."content/content.php?content.".$qs[2]."'>".CONTENT_ADMIN_ITEM_LAN_90."</a>";
+			$message .= CONTENT_ADMIN_ITEM_LAN_124." <a href='".e_PLUGIN_ABS."content/content.php?content.".$qs[2]."'>".CONTENT_ADMIN_ITEM_LAN_90."</a>";
 			$ns -> tablerender("", "<div style='text-align:center'><b>".$message."</b></div>");
 			require_once(e_ADMIN."footer.php");
 			exit;
@@ -439,7 +444,7 @@ if(!e_QUERY){																//show main categories
 
 // ##### End --------------------------------------------------------------------------------------
 
-
+ 
 // ##### Display options --------------------------------------------------------------------------
 function admin_content_config_adminmenu()
 {
@@ -495,8 +500,9 @@ function admin_content_config_adminmenu()
                         $var['submitted']['link']	= e_SELF."?submitted";
                 }
 
-				show_admin_menu(CONTENT_ADMIN_MENU_LAN_6, $act,$var);
-
+			 
+        e107::getNav()->admin(CONTENT_ADMIN_MENU_LAN_6, $act, $var, false, false, $sortlist);
+        
 				if(isset($qs[0]) && $qs[0] == "option" && isset($qs[1])){
 					unset($var);
 					$var=array();
@@ -508,11 +514,11 @@ function admin_content_config_adminmenu()
 					$var['menu']['text']			= CONTENT_ADMIN_MENU_LAN_14;
 
 					$sql = new db;
-					
-					$content_heading = e107::getDb()->retrieve($plugintable, "content_heading", "content_id='".$qs[1]."' LIMIT 1");
-
-					show_admin_menu(CONTENT_ADMIN_MENU_LAN_6.": ".$content_heading."", $act, $var, TRUE);
-
+					$content_heading = $category_total			= $sql -> retrieve($plugintable, "content_heading", "content_id='".$qs[1]."' ");
+					//list($content_heading)	= $sql -> db_Fetch();
+               
+					content_show_admin_menu(CONTENT_ADMIN_MENU_LAN_6.": ".$content_heading."", $act, $var, TRUE);         
+           
 					unset($var);
 					$var=array();
 					$var['recentpages']['text']		= CONTENT_ADMIN_MENU_LAN_11;
@@ -521,28 +527,24 @@ function admin_content_config_adminmenu()
 					$var['authorpage']['text']		= CONTENT_ADMIN_MENU_LAN_18;
 					$var['archivepage']['text']		= CONTENT_ADMIN_MENU_LAN_16;
 					$var['toppage']['text']			= CONTENT_ADMIN_MENU_LAN_20;
-					$var['scorepage']['text']		= CONTENT_ADMIN_MENU_LAN_22;
-					show_admin_menu(CONTENT_ADMIN_MENU_LAN_21.": ".$content_heading."", $act, $var, TRUE);
+					$var['scorepage']['text']		= CONTENT_ADMIN_MENU_LAN_22;     
+					content_show_admin_menu(CONTENT_ADMIN_MENU_LAN_21.": ".$content_heading."", $act, $var, TRUE);
 				
 				}else{
 						
 						if($showadmincat){
-							if($records = e107::getDb()->retrieve($plugintable, "content_id, content_heading", "content_parent='0' ", true)){
-								$category_total = count($records);
-								foreach($records as $row) {
+							$sql2 = new db;
+							if($category_total = $sql2 -> db_Select($plugintable, "content_id, content_heading", "content_parent='0' ")){
+								while($row = $sql2 -> db_Fetch()){
 
 									unset($var);
 									$var=array();
 
 									$array		= $aa -> getCategoryTree("", $row['content_id'], FALSE);	//get all categories from each main parent
-									$count_newarray = 0;
-									if (is_array($array)) {
-										$newarray	= array_merge_recursive($array);
-										$count_newarray = count($newarray);
-									}
-									$newparent=array();
+									$newarray	= array_merge_recursive($array);
 
-									for($a=0;$a<$count_newarray;$a++){
+									$newparent=array();
+									for($a=0;$a<count($newarray);$a++){
 										for($b=0;$b<count($newarray[$a]);$b++){
 											$newparent[$newarray[$a][$b]] = $newarray[$a][$b+1];
 											$b++;
@@ -568,8 +570,8 @@ function admin_content_config_adminmenu()
 											$act = "c";
 										}
 									}
-
-									show_admin_menu(CONTENT_ADMIN_MENU_LAN_5." : ".$row['content_heading']."", $act, $var);
+                  e107::getNav()->admin(CONTENT_ADMIN_MENU_LAN_5." : ".$row['content_heading']."", $act, $var, false, false, $sortlist);
+									 
 								}
 							}
 						}
@@ -578,13 +580,135 @@ function admin_content_config_adminmenu()
 }
 // ##### End --------------------------------------------------------------------------------------
 
-require_once(e_ADMIN."footer.php");
 
-function headerjs()
-{
-	global $cal;
-	return $cal->load_files();
+// ##### Display options original show_admin_menu doesn't work anymore   see https://github.com/e107inc/e107/issues/3139  -------------------------------
+if (!function_exists('content_show_admin_menu')) {
+	function content_show_admin_menu($title, $active_page, $e107_vars, $js = FALSE, $sub_link = FALSE, $sortlist = FALSE) {
+		global $ns, $BUTTON, $BUTTON_OVER, $BUTTONS_START, $BUTTONS_END, $SUB_BUTTON, $SUB_BUTTON_OVER, $SUB_BUTTONS_START, $SUB_BUTTONS_END;
+		$id_title = "yop_".str_replace(" ", "", $title);
+						
+		if (!isset($BUTTONS_START)) {
+			$BUTTONS_START = "<div style='text-align:center; width:100%'><table class='fborder' style='width:98%;'>\n";
+		}
+		if (!isset($BUTTON)) {
+			$BUTTON = "<tr><td class='button'><div style='width:100%;'><a style='cursor:hand; cursor:pointer; text-decoration:none;' {ONCLICK} >{LINK_TEXT}</a></div></td></tr>\n";
+		}
+		if (!isset($BUTTON_OVER)) {
+			$BUTTON_OVER = "<tr><td class='button'><div style='width:100%;'><a style='cursor:hand; cursor:pointer; text-decoration:none;' {ONCLICK} ><b>&laquo;&nbsp;{LINK_TEXT}&nbsp;&raquo;</b></a></div></td></tr>\n";
+		}
+		if (!isset($BUTTONS_END)) {
+			$BUTTONS_END = "</table></div>\n";
+		}
+		if (!isset($SUB_BUTTON)) {
+			$SUB_BUTTON = "<a style='text-decoration:none;' href='{LINK_URL}'>{LINK_TEXT}</a><br />";
+		}
+		if (!isset($SUB_BUTTON_OVER)) {
+			$SUB_BUTTON_OVER = "<b> &laquo; <a style='text-decoration:none;' href='{LINK_URL}'>{LINK_TEXT}</a> &raquo; </b><br />";
+		}
+		if (!isset($SUB_BUTTONS_START)) {
+			$SUB_BUTTONS_START = "<div style='width:100%'><table class='fborder' style='width:98%;'>
+			<tr><td class='button'><a style='cursor:hand; cursor:pointer; text-decoration:none;'
+			onclick=\"expandit('{SUB_HEAD_ID}');\" >{SUB_HEAD}</a></td></tr>
+			<tr id='{SUB_HEAD_ID}' style='display: none' ><td class='forumheader3' style='text-align:left;'>";
+		}
+		if (!isset($SUB_BUTTONS_END)) {
+			$SUB_BUTTONS_END = "</td></tr></table></div>";
+		}
+
+		if ($sortlist == TRUE) {
+			$temp = $e107_vars;
+			unset($e107_vars);
+			foreach (array_keys($temp) as $key) {
+				$func_list[] = $temp[$key]['text'];
+			}
+
+			usort($func_list, 'strcoll');
+
+			foreach ($func_list as $func_text) {
+				foreach (array_keys($temp) as $key) {
+					if ($temp[$key]['text'] == $func_text) {
+						$e107_vars[] = $temp[$key];
+					}
+				}
+			}
+		}
+
+		$search[0] = "/\{LINK_TEXT\}(.*?)/si";
+		$search[1] = "/\{LINK_URL\}(.*?)/si";
+		$search[2] = "/\{ONCLICK\}(.*?)/si";
+		$search[3] = "/\{SUB_HEAD\}(.*?)/si";
+		$search[4] = "/\{SUB_HEAD_ID\}(.*?)/si";
+
+		if ($sub_link) {
+			$replace[0] = '';
+			$replace[1] = '';
+			$replace[2] = '';
+			$replace[3] = $title;
+			$replace[4] = $id_title;
+			$text = preg_replace($search, $replace, $SUB_BUTTONS_START);
+		} else {
+			$text = $BUTTONS_START;
+		}
+
+		foreach (array_keys($e107_vars) as $act) 
+		{
+			if (!isset($e107_vars[$act]['perm']) || !$e107_vars[$act]['perm'] || getperms($e107_vars[$act]['perm'])) 
+			{
+				if ($active_page == $act || (str_replace("?", "", e_PAGE.e_QUERY) == str_replace("?", "", $act))) 
+				{
+					$BUTTON_TEMPLATE = $sub_link ? $SUB_BUTTON_OVER : $BUTTON_OVER;
+				} 
+				else 
+				{
+					$BUTTON_TEMPLATE = $sub_link ? $SUB_BUTTON : $BUTTON;
+				}
+				$replace[0] = str_replace(" ", "&nbsp;", $e107_vars[$act]['text']);
+				$replace[1] = varset($e107_vars[$act]['link'], '');
+				if (!empty($e107_vars[$act]['include'])) 
+				{
+					$replace[2] = $e107_vars[$act]['include'];
+				} 
+				else 
+				{
+					$replace[2] = $js ? "onclick=\"showhideit('".$act."');\"" : "onclick=\"document.location='".$e107_vars[$act]['link']."'; disabled=true;\"";
+				}
+				$replace[3] = $title;
+				$replace[4] = $id_title;
+				$text .= preg_replace($search, $replace, $BUTTON_TEMPLATE);
+			}
+		}
+		$text .= $sub_link ? $SUB_BUTTONS_END : $BUTTONS_END;
+
+		if ($title == "" || $sub_link) {
+			return $text;
+		} else {
+			$ns -> tablerender($title, $text, array('id' => $id_title, 'style' => 'button_menu'));
+		}
+	}
 }
 
+if (!function_exists("parse_admin"))
+{
+	function parse_admin($ADMINLAYOUT)
+	{
+		$sc = e107::getScBatch('admin');
+		$tp = e107::getParser();
+		$adtmp = explode("\n", $ADMINLAYOUT);
+		
+		for ($a = 0; $a < count($adtmp); $a++)
+		{
+			if (preg_match("/{.+?}/", $adtmp[$a]))
+			{
+				echo $tp->parseTemplate($adtmp[$a], true, $sc);
+			}
+			else
+			{
+				echo $adtmp[$a];
+			}
+		}
+	}
+}
+
+require_once(e_ADMIN."footer.php");
 
 ?>

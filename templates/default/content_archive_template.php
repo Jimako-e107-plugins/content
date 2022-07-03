@@ -29,7 +29,7 @@ $sc_style['CONTENT_ARCHIVE_TABLE_LETTERS']['post'] = "</div>";
 if(!isset($CONTENT_ARCHIVE_TABLE_START)){
 	$CONTENT_ARCHIVE_TABLE_START = "
 	{CONTENT_ARCHIVE_TABLE_LETTERS}
-	<table class='fborder'>
+	<table class='fborder content_archive_table_start'>
 	";
 }
 if(!isset($CONTENT_ARCHIVE_TABLE)){

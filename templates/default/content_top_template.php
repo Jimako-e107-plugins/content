@@ -37,7 +37,7 @@ if(!isset($CONTENT_TOP_TABLE_START)){
 }
 if(!isset($CONTENT_TOP_TABLE)){
 	$CONTENT_TOP_TABLE = "
-	<table class='fborder' style='width:98%; text-align:left; margin-bottom:5px;'>
+	<table class='fborder content_top_table' style='width:98%; text-align:left; margin-bottom:5px;'>
 	<tr>
 		{CONTENT_TOP_TABLE_ICON}
 		<td class='fcaption'>{CONTENT_TOP_TABLE_HEADING}</td>

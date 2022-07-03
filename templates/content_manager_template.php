@@ -21,7 +21,7 @@ global $sc_style, $content_shortcodes;
 // ##### CONTENT CONTENTMANAGER LIST --------------------------------------------------
 if(!isset($CONTENT_CONTENTMANAGER_TABLE_START)){
 	$CONTENT_CONTENTMANAGER_TABLE_START = "
-	<table class='fborder' style='width:98%; text-align:left;' cellpadding='0' cellspacing='0'>
+	<table class='fborder content_contentmanager_table_starT' style='width:98%; text-align:left;' cellpadding='0' cellspacing='0'>
 	<tr>
 		<td class='forumheader3'>".CONTENT_ADMIN_ITEM_LAN_57."</td>
 		<td class='forumheader3'>".CONTENT_ADMIN_ITEM_LAN_12."</td>

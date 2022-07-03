@@ -29,6 +29,9 @@ $datequery		= " AND content_datestamp < ".time()." AND (content_enddate=0 || con
 
 if (!defined('ADMIN_WIDTH')) { define("ADMIN_WIDTH", "width:98%;"); }
 
+
+$sql = e107::getDb();
+
 //icon, file, image upload
 if(isset($_POST['uploadfile']))
 {
@@ -42,8 +45,8 @@ if(isset($_POST['uploadfile']))
 		if($_POST['content_id']){
 			$newpid = $_POST['content_id'];
 		}else{
-			$sql -> db_select("pcontent", "MAX(content_id) as aid", "content_id!='0' ");
-			list($aid) = $sql -> db_Fetch();
+			$aid = $sql -> retrieve("pcontent", "MAX(content_id) as aid", "content_id!='0' ");
+			//list($aid) = $sql -> db_Fetch();
 			$newpid = $aid+1;
 		}
 	}
@@ -121,7 +124,7 @@ class contentdb
 		$_POST['content_subheading']	= $tp -> toDB($_POST['content_subheading']);
 		$_POST['content_summary']		= $tp -> toDB($_POST['content_summary']);
 
-		if(e107::getPref('wysiwyg',false)!==false)
+		if(e_WYSIWYG)
 		{
 			$_POST['content_text']		= $tp->createConstants($_POST['content_text']); // convert e107_images/ to {e_IMAGE} etc.
 		}
@@ -264,19 +267,18 @@ class contentdb
 					$totalimages .= "[img]".$image{$i};
 				}
 			}
-
+      
 			$zam = array("-", ":", " ");
 			if($_POST['update_datestamp'])
 			{
 				$starttime = time();
 			}
 			else
-			{
+			{    
 				if(isset($_POST['startdate']) && $_POST['startdate'] != "0" && $_POST['startdate'] != "")
-				{
-					$newstarttime = str_replace($zam, "*", $_POST['startdate']);
-					$newstarttime = explode("*", $newstarttime);
-					$newstarttime = mktime($newstarttime[3], $newstarttime[4], 0, $newstarttime[1], $newstarttime[2], $newstarttime[0]);
+				{ 
+					$newstarttime = $_POST['startdate'];
+          
 				}
 				else
 				{
@@ -298,12 +300,10 @@ class contentdb
 					$starttime = time();
 				}
 			}
-
+ 
 			if(isset($_POST['enddate']) && $_POST['enddate'] != "0" && $_POST['enddate'] != "")
 			{
-					$endtime = str_replace($zam, "*", $_POST['enddate']);
-					$endtime = explode("*", $endtime);
-					$endtime = mktime($endtime[3], $endtime[4], 0, $endtime[1], $endtime[2], $endtime[0]);
+				$endtime = $_POST['enddate'];
 			}
 			else
 			{
@@ -322,7 +322,7 @@ class contentdb
 				$custom['content_custom_presettags'] = $tp->toDB($_POST['content_custom_preset_key']);
 			}
 			if($custom){
-				$contentprefvalue = e107::serialize($custom, TRUE);
+				$contentprefvalue = $eArrayStorage->WriteArray($custom);
 			}else{
 				$contentprefvalue = "";
 			}
@@ -350,14 +350,23 @@ class contentdb
 				$e_event->trigger("content", $edata_cs);
 
 				if(!$type || $type == "admin"){
-					js_location(e_SELF."?".e_QUERY.".cc");
+				//jsx_location(e_SELF."?".e_QUERY.".cc");
+				$url = e_SELF."?".e_QUERY.".cc";
+				e107::getRedirect()->go($url);
+				
 				}elseif($type == "contentmanager"){
-					js_location(e_SELF."?c");
+					//jsx_location(e_SELF."?c");
+					$url = e_SELF."?c";
+					e107::getRedirect()->go($url);
 				}elseif($type == "submit"){
 					if($content_pref["content_submit_directpost"]){
-						js_location(e_SELF."?s");
+						//jsx_location(e_SELF."?s");
+						$url = e_SELF."?s";
+						e107::getRedirect()->go($url);
 					}else{
-						js_location(e_SELF."?d");
+						//jsx_location(e_SELF."?d");
+						$url = e_SELF."?d";
+						e107::getRedirect()->go($url);
 					}							
 				}
 		}
@@ -391,9 +400,13 @@ class contentdb
 				$e107cache->clear("$plugintable");
 				$e107cache->clear("comment.$plugintable.{$_POST['content_id']}");
 				if(!$type || $type == "admin"){
-					js_location(e_SELF."?".e_QUERY.".cu");
+					//jsx_location(e_SELF."?".e_QUERY.".cu");
+					$url = e_SELF."?".e_QUERY.".cu";
+					e107::getRedirect()->go($url);
 				}elseif($type == "contentmanager"){
-					js_location(e_SELF."?u");
+					//jsx_location(e_SELF."?u");
+					$url = e_SELF."?u";
+					e107::getRedirect()->go($url);
 				}
 			}
 		}
@@ -401,15 +414,18 @@ class contentdb
 
 		//function dbCategoryUpdate($mode){
 		function dbCategory($mode){
-			global $pref, $sql, $ns, $qs, $rs, $aa, $tp, $plugintable, $e107cache, $content_cat_icon_path_large, $content_cat_icon_path_small;
+			global $pref, $ns, $qs, $rs, $aa, $tp, $plugintable, $e107cache, $content_cat_icon_path_large, $content_cat_icon_path_small;
+			
+			$sql = e107::getDb();
 
 			$_POST['cat_heading']		= $tp -> toDB($_POST['cat_heading']);
 			$_POST['cat_subheading']	= $tp -> toDB($_POST['cat_subheading']);
-			if(defined("e_WYSIWYG") && e_WYSIWYG == TRUE){
+			if(e_WYSIWYG){
 				$_POST['cat_text']		= $tp->createConstants($_POST['cat_text']); // convert e107_images/ to {e_IMAGE} etc.
 			}
 			$_POST['cat_text']			= $tp -> toDB($_POST['cat_text']);
 			$_POST['cat_class']			= ($_POST['cat_class'] ? intval($_POST['cat_class']) : "0");
+
 
 			//category create
 			if( isset($qs[0]) && $qs[0]=='cat' && isset($qs[1]) && $qs[1]=='create' ){
@@ -443,37 +459,54 @@ class contentdb
 				}
 			}
 			$_POST['parent'] = $parent;
-
-			if( isset($_POST['ne_day']) && $_POST['ne_day']!='' && $_POST['ne_day']!='0' && $_POST['ne_day'] != "none" 
-				&& isset($_POST['ne_month']) && $_POST['ne_month']!='' && $_POST['ne_month']!='0' && $_POST['ne_month'] != "none" 
-				&& isset($_POST['ne_year']) && $_POST['ne_year']!='' && $_POST['ne_year']!='0' && $_POST['ne_year'] != "none" ){
-				$starttime = mktime( 0, 0, 0, intval($_POST['ne_month']), intval($_POST['ne_day']), intval($_POST['ne_year']));
-			}else{
-				$starttime = time();
+			if(isset($_POST['cat_startdate']) && $_POST['cat_startdate'] != "0" && $_POST['cat_startdate'] != "")
+				{ 
+					$newstarttime = e107::getDate()->toTime($_POST['cat_startdate'],'inputdatetime');
+				}
+				else
+				{
+					$newstarttime = time();
+				}
+			if(isset($_POST['content_datestamp']) && $_POST['content_datestamp'] != "" && $_POST['content_datestamp'] != "0")
+				{
+					if($newstarttime != $starttime)
+					{
+						$starttime = $newstarttime;   
+					}
+					else
+					{
+						$starttime = intval($_POST['content_datestamp']);
+					}
+				}
+			else
+			{
+					$starttime = time();
 			}
-
-			if( isset($_POST['end_day']) && $_POST['end_day']!='' && $_POST['end_day']!='0' && $_POST['end_day'] != "none" 
-				&& isset($_POST['end_month']) && $_POST['end_month']!='' && $_POST['end_month']!='0' && $_POST['end_month'] != "none" 
-				&& isset($_POST['end_year']) && $_POST['end_year']!='' && $_POST['end_year']!='0' && $_POST['end_year'] != "none" ){
-				$endtime = mktime( 0, 0, 0, intval($_POST['end_month']), intval($_POST['end_day']), intval($_POST['end_year']));
-			}else{
+			if(isset($_POST['cat_enddate']) && $_POST['cat_enddate'] != "0" && $_POST['cat_enddate'] != "")
+			{
+					$endtime = e107::getDate()->toTime($_POST['cat_enddate'],'inputdatetime');
+			}
+			else
+			{
 				$endtime = "0";
 			}
-
+			
 			if($mode == "create"){
-				$mysql_insert_id = e107::getDB()-> db_Insert($plugintable, "'0', '".$_POST['cat_heading']."', '".$_POST['cat_subheading']."', '', '".$_POST['cat_text']."', '".ADMINID."', '".$tp->toDB($_POST["cat_icon"])."', '', '', '".$_POST['parent']."', '".intval($_POST['cat_comment'])."', '".intval($_POST['cat_rate'])."', '".intval($_POST['cat_pe'])."', '', '".$starttime."', '".$endtime."', '".$_POST['cat_class']."', '', '0', '0', '', '' ");
+				$iid = $sql -> insert($plugintable, "'0', '".$_POST['cat_heading']."', '".$_POST['cat_subheading']."', '', '".$_POST['cat_text']."', '".ADMINID."', '".$tp->toDB($_POST["cat_icon"])."', '', '', '".$_POST['parent']."', '".intval($_POST['cat_comment'])."', '".intval($_POST['cat_rate'])."', '".intval($_POST['cat_pe'])."', '', '".$starttime."', '".$endtime."', '".$_POST['cat_class']."', '', '0', '0', '', '' ");
 
 				// check and insert default pref values if new main parent + create menu file
-				if($_POST['parent'] == "0"){
-					$iid = $mysql_insert_id ;
+				if($_POST['parent'] == "0" && $idd) {
+					//$iid = mysql_insert_id();
 					$content_pref = $aa -> getContentPref($iid);
 					$aa -> CreateParentMenu($iid);
-				}
+				}                            
 				$e107cache->clear("$plugintable");
-				js_location(e_SELF."?".e_QUERY.".pc");
+				//jsx_location(e_SELF."?".e_QUERY.".pc");
+				$url = e_SELF."?".e_QUERY.".pc";
+				e107::getRedirect()->go($url);
 
 			}elseif($mode == "update"){
-				$sql -> db_Update($plugintable, "content_heading = '".$_POST['cat_heading']."', content_subheading = '".$_POST['cat_subheading']."', content_summary = '', content_text = '".$_POST['cat_text']."', content_author = '".ADMINID."', content_icon = '".$tp->toDB($_POST["cat_icon"])."', content_image = '', content_parent = '".$_POST['parent']."', content_comment = '".intval($_POST['cat_comment'])."', content_rate = '".intval($_POST['cat_rate'])."', content_pe = '".intval($_POST['cat_pe'])."', content_refer = '0', content_datestamp = '".$starttime."', content_enddate = '".$endtime."', content_class = '".intval($_POST['cat_class'])."' WHERE content_id = '".intval($_POST['cat_id'])."' ");
+				$sql -> update($plugintable, "content_heading = '".$_POST['cat_heading']."', content_subheading = '".$_POST['cat_subheading']."', content_summary = '', content_text = '".$_POST['cat_text']."', content_author = '".ADMINID."', content_icon = '".$tp->toDB($_POST["cat_icon"])."', content_image = '', content_parent = '".$_POST['parent']."', content_comment = '".intval($_POST['cat_comment'])."', content_rate = '".intval($_POST['cat_rate'])."', content_pe = '".intval($_POST['cat_pe'])."', content_refer = '0', content_datestamp = '".$starttime."', content_enddate = '".$endtime."', content_class = '".intval($_POST['cat_class'])."' WHERE content_id = '".intval($_POST['cat_id'])."' ");
 
 				// check and insert default pref values if new main parent + create menu file
 				if($_POST['parent'] == "0"){
@@ -482,7 +515,9 @@ class contentdb
 					$aa -> CreateParentMenu($_POST['cat_id']);
 				}
 				$e107cache->clear("$plugintable");
-				js_location(e_SELF."?".e_QUERY.".pu");
+				//jsx_location(e_SELF."?".e_QUERY.".pu");
+				$url = e_SELF."?".e_QUERY.".pu";
+				e107::getRedirect()->go($url);				
 			}
 		}
 
@@ -496,8 +531,9 @@ class contentdb
 				$row = $sql -> db_Fetch();
 
 				//get current preferences
-				$content_pref = e107::unserialize($row['content_pref']);
-
+				//$content_pref = $eArrayStorage->ReadxArray($row['content_pref']);
+        $content_pref = e107::unserialize($row['content_pref']);
+        
 				//assign new preferences
 				if($value == "clear"){
 					$content_pref["content_manager_allowed"] = "";
@@ -506,7 +542,7 @@ class contentdb
 				}
 				
 				//create new array of preferences
-				$tmp = e107::serialize($content_pref, TRUE);
+				$tmp = $eArrayStorage->WriteArray($content_pref);
 
 				$sql -> db_Update($plugintable, "content_pref = '{$tmp}' WHERE content_id = '".intval($id)."' ");
 

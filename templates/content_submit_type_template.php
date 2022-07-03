@@ -27,7 +27,7 @@ $sc_style['CONTENT_SUBMIT_TYPE_TABLE_SUBHEADING']['post'] = "";
 // ##### CONTENT SUBMIT TYPE LIST --------------------------------------------------
 if(!isset($CONTENT_SUBMIT_TYPE_TABLE_START)){
 				$CONTENT_SUBMIT_TYPE_TABLE_START = "
-				<table class='fborder' style='width:98%; text-align:left;'>\n";
+				<table class='fborder content_submit_type_table_start' style='width:98%; text-align:left;'>\n";
 }
 if(!isset($CONTENT_SUBMIT_TYPE_TABLE)){
 				$CONTENT_SUBMIT_TYPE_TABLE = "

@@ -27,7 +27,7 @@ $sc_style['CONTENT_AUTHOR_TABLE_TOTAL']['post'] = ")";
 // ##### CONTENT AUTHOR -------------------------------------------------------
 if(!isset($CONTENT_AUTHOR_TABLE_START)){
 	$CONTENT_AUTHOR_TABLE_START = "
-	<table class='fborder' style='width:98%; text-align:left;'>\n";
+	<table class='fborder content_author_table_start' style='width:98%; text-align:left;'>\n";
 }
 if(!isset($CONTENT_AUTHOR_TABLE)){
 	$CONTENT_AUTHOR_TABLE = "

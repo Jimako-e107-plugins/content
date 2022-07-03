@@ -37,7 +37,7 @@ $sc_style['CONTENT_RECENT_TABLE_REFER']['post'] = ")";
 $sc_style['CONTENT_RECENT_TABLE_AUTHORDETAILS']['pre'] = CONTENT_LAN_11." ";
 $sc_style['CONTENT_RECENT_TABLE_AUTHORDETAILS']['post'] = "";
 
-$sc_style['CONTENT_RECENT_TABLE_SUBHEADING']['pre'] = "<tr><td class='forumheader3'>";
+$sc_style['CONTENT_RECENT_TABLE_SUBHEADING']['pre'] = "<tr><td class='forumheader3 content_recent_table_subheading'>";
 $sc_style['CONTENT_RECENT_TABLE_SUBHEADING']['post'] = "</td></tr>";
 
 $sc_style['CONTENT_RECENT_TABLE_SUMMARY']['pre'] = "<tr><td class='forumheader3'>";
@@ -60,7 +60,7 @@ if(!isset($CONTENT_RECENT_TABLE_START)){
 }
 if(!isset($CONTENT_RECENT_TABLE)){
 	$CONTENT_RECENT_TABLE = "
-	<table class='fborder' style='width:98%; text-align:left;margin-bottom:5px;'>
+	<table class='fborder content_recent_table'>
 		<tr>
 			{CONTENT_RECENT_TABLE_ICON}
 			<td class='fcaption'>{CONTENT_RECENT_TABLE_HEADING} {CONTENT_RECENT_TABLE_REFER}</td>

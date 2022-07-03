@@ -17,10 +17,10 @@
 */
 
 if (!defined('e107_INIT')) { exit; }
-if (!isset($pref['plug_installed']['content']))
+
+if (!e107::isInstalled('content'))
 {
 	e107::redirect();
-	exit;
 }
 
 global $plugindir, $plugintable, $datequery;
@@ -392,11 +392,13 @@ class content{
 					//if those are not present, insert the default ones given in this file
 					if ($num_rows == 0) {
 						$content_pref = $this -> ContentDefaultPrefs();
-						$tmp = e107::serialize($content_pref, TRUE);
+						//$tmp = $eArrayStorage->WritexArray($content_pref);
+						$tmp = e107::serialize($content_pref, true);
 						$sql -> db_Insert("core", "'$plugintable', '{$tmp}' ");
 						$sql -> db_Select("core", "*", "e107_name='$plugintable' ");
 					}
 					$row = $sql -> db_Fetch();
+					//$content_pref = $eArrayStorage->ReadxArray($row['e107_value']);
 					$content_pref = e107::unserialize($row['e107_value']);
 					
 					//create array of custom preset tags
@@ -412,19 +414,22 @@ class content{
 					}
 
 					//finally we can store the new default prefs into the db
-					$tmp1 = e107::serialize($content_pref, TRUE);
+					//$tmp1 = $eArrayStorage->WritexArray($content_pref);
+					$tmp1 = e107::serialize($content_pref, true);
 					$sql -> db_Update($plugintable, "content_pref='{$tmp1}' WHERE content_id='$id' ");
 					$sql -> db_Select($plugintable, "content_pref", "content_id='$id' ");
 					$row = $sql -> db_Fetch();
 				}
-				$content_pref = e107::unserialize($row['content_pref']);
-
+				//$content_pref = $eArrayStorage->ReadxArray($row['content_pref']);
+        $content_pref = e107::unserialize($row['content_pref']);
+        
 				if(e_PAGE == "admin_content_config.php" && isset($qs[0]) && $qs[0] == 'option'){
 				}else{
 					//check inheritance, if set, get core prefs (default prefs)
 					if(isset($content_pref['content_inherit']) && $content_pref['content_inherit']!=''){
 						$sql -> db_Select("core", "*", "e107_name='$plugintable' ");
 						$row = $sql -> db_Fetch();
+						//$content_pref = $eArrayStorage->ReadxArray($row['e107_value']);
 						$content_pref = e107::unserialize($row['e107_value']);
 					}
 				}
@@ -433,11 +438,13 @@ class content{
 				$num_rows = $sql -> db_Select("core", "*", "e107_name='$plugintable' ");
 				if ($num_rows == 0) {
 					$content_pref = $this -> ContentDefaultPrefs();
-					$tmp = e107::serialize($content_pref, TRUE);
+					//$tmp = $eArrayStorage->WritexArray($content_pref);
+					$tmp = e107::serialize($content_pref, true);
 					$sql -> db_Insert("core", "'$plugintable', '{$tmp}' ");
 					$sql -> db_Select("core", "*", "e107_name='$plugintable' ");
 				}
 				$row = $sql -> db_Fetch();
+				//$content_pref = $eArrayStorage->ReadxArray($row['e107_value']);
 				$content_pref = e107::unserialize($row['e107_value']);
 			}
 			return $content_pref;
@@ -466,6 +473,7 @@ class content{
 				//first get the existing prefs and parent
 				$sql -> db_Select($plugintable, "content_pref, content_parent", "content_id='".intval($id)."' ");
 				$row = $sql -> db_Fetch();
+				//$current = $eArrayStorage->ReadxArray($row['content_pref']);
 				$current = e107::unserialize($row['content_pref']);
 				$currentparent = $row['content_parent'];
 
@@ -510,9 +518,10 @@ class content{
 					$content_pref[$k] = $tp->toDB($v);
 				}
 			}
- 
+
 			//create new array of preferences
-			$tmp = e107::serialize($content_pref, TRUE);
+			//$tmp = $eArrayStorage->WritexArray($content_pref);
+			$tmp = e107::serialize($content_pref, true);
  
 			//update core table
 			if($id == "0"){
@@ -521,7 +530,7 @@ class content{
 			}else{
 				$sql -> db_Update($plugintable, "content_pref='{$tmp}' WHERE content_id='".intval($id)."' ");
 			}
-
+ 
 			return $content_pref;
 		}
 
@@ -536,7 +545,7 @@ class content{
 			global $agc;
 
 			if($parent){
-				$agc = array();
+				$agc = "";
 				$qrygc = " content_id = '".intval($parent)."' ";
 			}else{
 				$qrygc = " content_parent = '0' ";
@@ -548,11 +557,12 @@ class content{
 			if($classcheck == TRUE){
 				$qrygc .= " AND content_class REGEXP '".e_CLASS_REGEXP."' ";
 			}
+
 			$datequery		= " AND content_datestamp < ".time()." AND (content_enddate=0 || content_enddate>".time().") ";
 
-			if($records = e107::getDb()->retrieve($plugintable, "content_id, content_heading, content_parent", " WHERE ".$qrygc." ".$datequery." ", true  ))
-			 	{ 
-				foreach($records AS $row) { 
+			$sqlgetcat = new db;
+			if($sqlgetcat -> db_Select($plugintable, "content_id, content_heading, content_parent", " ".$qrygc." ".$datequery." " )){
+				while($row = $sqlgetcat -> db_Fetch()){
 					if($agc){
 						if($row['content_parent'] != "0"){
 							if(array_key_exists(substr($row['content_parent'],2), $agc)){
@@ -585,8 +595,11 @@ class content{
 			$crumb = "";
 			if(is_array($arr)){
 				if(array_key_exists($id, $arr)){
-					for($i=0;$i<count($arr[$id]);$i++){
-						$crumb .= "<a href='".e_SELF."?cat.".$arr[$id][$i]."'>".$arr[$id][$i+1]."</a> > ";
+					for($i=0;$i<count($arr[$id]);$i++){   
+      			$row['content_sef'] = eHelper::title2sef($arr[$id][$i+1],'dashl');
+						$row['content_query'] = "?cat.".$arr[$id][$i];
+						$url = e107::url("content", "content", $row, "full"); 
+						$crumb .= "<a href='".$url."'>".$arr[$id][$i+1]."</a> > ";
 						$i++;
 					}
 					$crumb = substr($crumb,0,-3);
@@ -632,13 +645,13 @@ class content{
 				if(array_key_exists($parent, $arr)){
 					$sep = (isset($content_pref["content_breadcrumb_seperator"]) ? $content_pref["content_breadcrumb_seperator"] : ">");
 					if($content_pref["content_breadcrumb_base"] && isset($content_pref["content_breadcrumb_base"])){
-						$crumb .= "<a href='".e_HTTP."'>".CONTENT_LAN_58."</a> ".$sep." ";
+						$crumb .= "<a href='".e_BASE."'>".CONTENT_LAN_58."</a> ".$sep." ";
 					}
 					if($content_pref["content_breadcrumb_self"] && isset($content_pref["content_breadcrumb_self"])){
-						$crumb .= "<a href='".e_HTTP."'>".CONTENT_LAN_59."</a> ".$sep." ";
+						$crumb .= "<a href='".e_SELF."'>".CONTENT_LAN_59."</a> ".$sep." ";
 					}
 					for($i=0;$i<count($arr[$parent]);$i++){
-						$crumb .= "<a href='".e_HTTP."?cat.".$arr[$parent][$i]."'>".$arr[$parent][$i+1]."</a> ".$sep." ";
+						$crumb .= "<a href='".e_PLUGIN_ABS."content/content.php?cat.".$arr[$parent][$i]."'>".$arr[$parent][$i+1]."</a> ".$sep." ";
 						$i++;
 					}
 				}
@@ -673,7 +686,7 @@ class content{
 					$crumb = substr($crumb,0,-strlen(trim($sep)));
 				}
 
-				$crumb = "<div class='breadcrumb'>".$crumb."</div>";
+				$crumb = "<div class='breadcrumb content'>".$crumb."</div>";
 				if(isset($content_pref["content_breadcrumb_rendertype"]) && $content_pref["content_breadcrumb_rendertype"] == "1"){
 					echo $crumb;
 					return "";
@@ -913,10 +926,12 @@ class content{
 				}elseif($mode=='category'){
 					if($qs[1] == "create"){
 						$checkid	= (isset($qs[2]) && is_numeric($qs[2]) ? $qs[2] : "");
-						$value		= e_SELF."?cat.create.".$catid;
+					//	$value		= e_PLUGIN."content/content.php?cat.create.".$catid;
+					    $value  = $catid;
 					}elseif($qs[1] == "edit"){
 						$checkid	= ($currentparent ? $currentparent : "");
-						$value		= e_SELF."?cat.edit.".$qs[2].".".$catid;
+						// $value		= e_PLUGIN."content/content.php?cat.edit.".$qs[2].".".$catid;   
+						 $value  = $qs[2].".".$catid;
 					}
 				}
 				$sel = ($catid == $checkid ? "1" : "0");
@@ -938,13 +953,21 @@ class content{
 				$text .= $string;
 				$text .= $rs -> form_select_close();
 
-			}elseif($mode=='category'){
-				$selectjs = " onchange=\" if(this.options[this.selectedIndex].value != 'none'){ return document.location=this.options[this.selectedIndex].value; } \"";
-				$text = $rs -> form_select_open("parent1", $selectjs);
+			}elseif($mode=='category'){     
+			  // just to be sure   
+			  if($qs[1] == "create"){
+			     $redirecturl = e_SELF."?cat.".$qs[1].".";
+			  }
+			  elseif($qs[1] == "edit"){
+			     $redirecturl = e_SELF."?cat.".$qs[1].".";
+			  }
+			      
+				$selectjs = " onchange=\" if(this.options[this.selectedIndex].value != 'none'){ return document.location='".$redirecturl."'+this.options[this.selectedIndex].value; } \"";
+				$text = $rs -> form_select_open("parent1", $selectjs);  
 				if($qs[1] == "create"){
-					$text .= $rs -> form_option(CONTENT_ADMIN_MAIN_LAN_29."&nbsp;&nbsp;", (isset($qs[2]) ? "0" : "1"), e_SELF."?cat.create", "style='font-weight:bold;'");
+					$text .= $rs -> form_option(CONTENT_ADMIN_MAIN_LAN_29."&nbsp;&nbsp;", (isset($qs[2]) ? "0" : "1"), '', "style='font-weight:bold;'");
 				}else{
-					$text .= $rs -> form_option(CONTENT_ADMIN_MAIN_LAN_29."&nbsp;&nbsp;", (isset($qs[2]) ? "0" : "1"), e_SELF."?cat.edit.".$qs[2].".0", "style='font-weight:bold;'");
+					$text .= $rs -> form_option(CONTENT_ADMIN_MAIN_LAN_29."&nbsp;&nbsp;", (isset($qs[2]) ? "0" : "1"), $qs[2].".0", "style='font-weight:bold;'");
 				}
 				$text .= $string;
 				$text .= $rs -> form_select_close();
@@ -1006,7 +1029,7 @@ class content{
 
 			$blank			= (!$blank ? "0" : $blank);
 			$border			= "border:0;";
-			$hrefpre		= ($linkid ? "<a href='".e_SELF."?".$linkid."'>" : "");
+			$hrefpre		= ($linkid ? "<a href='".e_HTTP."?".$linkid."'>" : "");
 			$hrefpost		= ($linkid ? "</a>" : "");
 
 			if($mode == "item"){
@@ -1030,7 +1053,7 @@ class content{
 				$width		= "";
 				$icon		= ($icon ? $path.$icon : ($blank ? $content_icon_path."blank.gif" : ""));
 			}
-
+ 
 			if($icon && file_exists($icon)){
 				$iconstring	= $hrefpre."<img src='".$icon."' alt='' style='".$width." ".$border."' />".$hrefpost;
 			}else{
@@ -1075,7 +1098,7 @@ class content{
 						$authorinfo = $authordetails[1];
 					}
 					if(USER && is_numeric($authordetails[0]) && $authordetails[0] != "0" && isset($content_pref["content_{$mode}_authorprofile"]) && $content_pref["content_{$mode}_authorprofile"]){
-						$authorinfo .= " <a href='".e_HTTP."user.php?id.".$authordetails[0]."' title='".CONTENT_LAN_40."'>".CONTENT_ICON_USER."</a>";
+						$authorinfo .= " <a href='".e_BASE."user.php?id.".$authordetails[0]."' title='".CONTENT_LAN_40."'>".CONTENT_ICON_USER."</a>";
 					}
 				}
 				if(isset($content_pref["content_{$mode}_authoricon"]) && $content_pref["content_{$mode}_authoricon"]){
@@ -1094,7 +1117,7 @@ class content{
 			//$text		:	the help text to show into the popup
 
 			if(!$image || !file_exists($image)){
-				$image = $plugindir."admin_images/docs_16.png";
+				$image = e_IMAGE."admin_images/docs_16.png";
 			}
 			if(!$width){ $width = "320"; }
 			if(!$title){ $title = "content management help area"; }
@@ -1111,7 +1134,7 @@ class content{
 			global $plugindir, $plugintable, $qs, $rs;
 
 			if(!is_object($rs)){
-				require_once(e_HANDLER."form_handler.php");
+				require_once($plugindir."handlers/form_handler.php");
 				$rs = new form;
 			}
 			if(!isset($searchtypeid)){
@@ -1178,27 +1201,41 @@ class content{
 
 				if($mode == "page" || ($mode == "menu" && $content_pref["content_menu_links"] && $content_pref["content_menu_links_dropdown"]) ){
 					$CONTENT_SEARCH_TABLE_SELECT .= $rs -> form_option(CONTENT_LAN_56, 1, "none").$rs -> form_option("&nbsp;", "0", "none");
-
+          $params['content_heading'] = $this -> getCategoryHeading($mainparent);
+          $params['content_sef'] = eHelper::title2sef($params['content_heading'],'dashl');
 					if($mode == "page" || ($mode == "menu" && $content_pref["content_menu_viewallcat"])){
-					   $CONTENT_SEARCH_TABLE_SELECT .= $rs -> form_option(CONTENT_LAN_6, 0, $plugindir."content.php?cat.list.".$mainparent);
+             $params['content_query'] = "?cat.list.".$mainparent;
+             $url = e107::url("content", "content", $params, "full");
+					   $CONTENT_SEARCH_TABLE_SELECT .= $rs -> form_option(CONTENT_LAN_6, 0, $url);
 					}
 					if($mode == "page" || ($mode == "menu" && $content_pref["content_menu_viewallauthor"])){
-					   $CONTENT_SEARCH_TABLE_SELECT .= $rs -> form_option(CONTENT_LAN_7, 0, $plugindir."content.php?author.list.".$mainparent);
+             $params['content_query'] = "?author.list.".$mainparent;
+             $url = e107::url("content", "content", $params, "full");
+					   $CONTENT_SEARCH_TABLE_SELECT .= $rs -> form_option(CONTENT_LAN_7, 0, $url);
 					}
 					if($mode == "page" || ($mode == "menu" && $content_pref["content_menu_viewallitems"])){
-					   $CONTENT_SEARCH_TABLE_SELECT .= $rs -> form_option(CONTENT_LAN_83, 0, $plugindir."content.php?list.".$mainparent);
+             $params['content_query'] = "?list.".$mainparent;
+             $url = e107::url("content", "content", $params, "full");          
+					   $CONTENT_SEARCH_TABLE_SELECT .= $rs -> form_option(CONTENT_LAN_83, 0, $plugindir."content.php?list.".$url);
 					}
 					if($mode == "page" || ($mode == "menu" && $content_pref["content_menu_viewtoprated"])){
-					   $CONTENT_SEARCH_TABLE_SELECT .= $rs -> form_option(CONTENT_LAN_8, 0, $plugindir."content.php?top.".$mainparent);
+             $params['content_query'] = "?top.".$mainparent;
+             $url = e107::url("content", "content", $params, "full");           
+					   $CONTENT_SEARCH_TABLE_SELECT .= $rs -> form_option(CONTENT_LAN_8, 0, $url );
 					}
 					if($mode == "page" || ($mode == "menu" && $content_pref["content_menu_viewtopscore"])){
-					   $CONTENT_SEARCH_TABLE_SELECT .= $rs -> form_option(CONTENT_LAN_12, 0, $plugindir."content.php?score.".$mainparent);
+             $params['content_query'] = "?score.".$mainparent;
+             $url = e107::url("content", "content", $params, "full");              
+					   $CONTENT_SEARCH_TABLE_SELECT .= $rs -> form_option(CONTENT_LAN_12, 0, $url);
 					}
 					if($mode == "page" || ($mode == "menu" && $content_pref["content_menu_viewrecent"])){
-					   $CONTENT_SEARCH_TABLE_SELECT .= $rs -> form_option(CONTENT_LAN_61, 0, $plugindir."content.php?recent.".$mainparent);
+             $params['content_query'] = "?recent.".$mainparent;
+             $url = e107::url("content", "content", $params, "full");           
+					   $CONTENT_SEARCH_TABLE_SELECT .= $rs -> form_option(CONTENT_LAN_61, 0, $url);
 					}
 					if( ($mode == "page" || ($mode == "menu" && $content_pref["content_menu_viewsubmit"]) && $content_pref["content_submit"] && check_class($content_pref["content_submit_class"]) ) ){
-						$CONTENT_SEARCH_TABLE_SELECT .= $rs -> form_option(CONTENT_LAN_75, 0, $plugindir."content_submit.php");
+         
+            $CONTENT_SEARCH_TABLE_SELECT .= $rs -> form_option(CONTENT_LAN_75, 0, $plugindir."content_submit.php");
 					}
 					$CONTENT_SEARCH_TABLE_SELECT .= $rs -> form_option("&nbsp;", "0", "none");
 				}
@@ -1545,16 +1582,13 @@ class content{
 				$qry .= " content_id='".$catid."' || ";
 			}
 			$qry = substr($qry,0,-3);
-			$records = e107::getDb()->retrieve($plugintable, "content_id, content_heading, content_pref", $qry, true);
-            
-            
-			if($records)
+			if($sql -> db_Select($plugintable, "content_id, content_heading, content_pref", $qry))
 			{
-				foreach($records as $row)  
+				while($row = $sql -> db_Fetch(MYSQL_ASSOC))
 				{
-                    
-                   	if(isset($row['content_pref']) && $row['content_pref'])
+					if(isset($row['content_pref']) && $row['content_pref'])
 					{
+						//$content_pref = $eArrayStorage->ReadxArray($row['content_pref']);
 						$content_pref = e107::unserialize($row['content_pref']);
 					}
 					if( (isset($content_pref["content_manager_approve"]) && ($content_pref["content_manager_approve"] != e_UC_PUBLIC) && check_class($content_pref["content_manager_approve"])) 

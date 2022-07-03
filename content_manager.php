@@ -16,7 +16,11 @@
 +----------------------------------------------------------------------------+
 */
 
-require_once("../../class2.php");
+if(!defined('e107_INIT'))
+{
+	require_once('../../class2.php');
+}
+
 if (!isset($pref['plug_installed']['content']))
 {
 	e107::redirect();
@@ -24,18 +28,19 @@ if (!isset($pref['plug_installed']['content']))
 }
 
 $plugindir = e_PLUGIN."content/";
-require_once($plugindir."content_shortcodes.php");
+$plugindir_abs = e_PLUGIN_ABS."content/";
+
+//require_once($plugindir."content_shortcodes.xphp");
+$content_shortcodes = e107::getScBatch('content',true);
 
 global $tp;
 require_once(e_HANDLER."userclass_class.php");
 require_once(e_HANDLER."form_handler.php");
 $rs = new form;
- 
+//e107_require_once(e_HANDLER.'arrayxstorage_class.php');
+//$eArrayStorage = new ArrayData();
 require_once(e_HANDLER."file_class.php");
 $fl = new e_file;
-
-require_once($plugindir."handlers/calendar/calendar_class.php");
-$cal = new DHTML_Calendar(true);
 
 require_once($plugindir."handlers/content_class.php");
 $aa = new content;
@@ -76,13 +81,6 @@ if(isset($_POST['delete']))
 //these have to be set for the tinymce wysiwyg
 $e_wysiwyg	= "content_text";
 
-//include js
-function headerjs()
-{
-	echo "<script type='text/javascript' src='".e_FILE."popup.js'></script>\n";
-	global $cal;
-	return $cal->load_files();
-}
 // ##### DB ---------------------------------------------------------------------------------------
 
 
@@ -127,7 +125,7 @@ if(isset($message))
 {
 	$ns -> tablerender("", "<div style='text-align:center'><b>".$message."</b></div>");
 }
-
+     
 if(!e_QUERY)
 {
 	$aform -> show_contentmanager("edit", USERID, USERNAME);
@@ -156,7 +154,7 @@ if(!e_QUERY)
 	elseif($qs[0] == "content" && is_numeric($qs[1]))
 	{
 		$aform -> show_manage_content("contentmanager", USERID, USERNAME);
-
+       
 	//create new item
 	}
 	elseif($qs[0] == "content" && $qs[1] == "create" && is_numeric($qs[2]))
@@ -188,7 +186,7 @@ if(!e_QUERY)
 			$message .= CONTENT_ADMIN_ITEM_LAN_88." <a href='".e_SELF."?content.create.".$mainparent."'>".CONTENT_ADMIN_ITEM_LAN_90."</a><br />";
 			$message .= CONTENT_ADMIN_ITEM_LAN_89." <a href='".e_SELF."?content.".$mainparent."'>".CONTENT_ADMIN_ITEM_LAN_90."</a><br />";
 			$message .= CONTENT_ADMIN_ITEM_LAN_91." <a href='".e_SELF."?content.edit.".$qs[2]."'>".CONTENT_ADMIN_ITEM_LAN_90."</a><br />";
-			$message .= CONTENT_ADMIN_ITEM_LAN_124." <a href='".e_PLUGIN."content/content.php?content.".$qs[2]."'>".CONTENT_ADMIN_ITEM_LAN_90."</a>";
+			$message .= CONTENT_ADMIN_ITEM_LAN_124." <a href='".e_PLUGIN_ABS."content/content.php?content.".$qs[2]."'>".CONTENT_ADMIN_ITEM_LAN_90."</a>";
 			$ns -> tablerender("", "<div style='text-align:center'><b>".$message."</b></div>");
 			require_once(e_ADMIN."footer.php");
 			exit;

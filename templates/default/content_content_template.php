@@ -61,61 +61,61 @@ $sc_style['CONTENT_CONTENT_TABLE_DATE']['post'] = "";
 
 $sc_style['CONTENT_CONTENT_TABLE_PARENT']['pre'] = "<br />".CONTENT_LAN_9." ";
 $sc_style['CONTENT_CONTENT_TABLE_PARENT']['post'] = "";
-
-//$sc_style['CONTENT_CONTENT_TABLE_INFO_PRE']['pre'] = "<div style='clear:both;'><div style='float:left;'>";
-//$sc_style['CONTENT_CONTENT_TABLE_INFO_PRE']['post'] = "";
-//$sc_style['CONTENT_CONTENT_TABLE_INFO_POST']['pre'] = "";
-//$sc_style['CONTENT_CONTENT_TABLE_INFO_POST']['post'] = "</div></div>";
-
-//$sc_style['CONTENT_CONTENT_TABLE_ICON']['pre'] = "<div style='float:left; padding-right:10px;'>";
-//$sc_style['CONTENT_CONTENT_TABLE_ICON']['post'] = "</div>";
-
+ 
 $sc_style['CONTENT_CONTENT_TABLE_ICON']['pre'] = "<td style='width:10%; white-space:nowrap; vertical-align:top; padding-right:10px;'>";
 $sc_style['CONTENT_CONTENT_TABLE_ICON']['post'] = "</td>";
 
-$sc_style['CONTENT_CONTENT_TABLE_INFO_PRE']['pre'] = "<table cellpadding='0' cellspacing='0' style='width:100%; margin-bottom:20px;'><tr>";
+$sc_style['CONTENT_CONTENT_TABLE_INFO_PRE']['pre'] = "<table class='content_content_table_info_pre'><tr><td>";
 $sc_style['CONTENT_CONTENT_TABLE_INFO_PRE']['post'] = "";
 $sc_style['CONTENT_CONTENT_TABLE_INFO_POST']['pre'] = "";
-$sc_style['CONTENT_CONTENT_TABLE_INFO_POST']['post'] = "</tr></table>";
+$sc_style['CONTENT_CONTENT_TABLE_INFO_POST']['post'] = "</td></tr></table>";
 
 $sc_style['CONTENT_CONTENT_TABLE_PREV_PAGE']['pre'] = "<div style='clear:both; padding-bottom:20px; padding-top:20px;'><div style='float:left;'>";
 $sc_style['CONTENT_CONTENT_TABLE_PREV_PAGE']['post'] = "</div>";
 $sc_style['CONTENT_CONTENT_TABLE_NEXT_PAGE']['pre'] = "<div style='float:right;'>";
 $sc_style['CONTENT_CONTENT_TABLE_NEXT_PAGE']['post'] = "</div></div>";
 
-$sc_style['CONTENT_CONTENT_TABLE_INFO_PRE_HEADDATA']['pre'] = "<td style='vertical-align:top;'>";
-$sc_style['CONTENT_CONTENT_TABLE_INFO_PRE_HEADDATA']['post'] = "";
-$sc_style['CONTENT_CONTENT_TABLE_INFO_POST_HEADDATA']['pre'] = "";
-$sc_style['CONTENT_CONTENT_TABLE_INFO_POST_HEADDATA']['post'] = "</td>";
+$sc_style['CONTENT_CONTENT_TABLE_INFO_PRE_HEADDATA']['pre'] = "";
+$sc_style['CONTENT_CONTENT_TABLE_INFO_PRE_HEADDATA']['post'] = " ";
+$sc_style['CONTENT_CONTENT_TABLE_INFO_POST_HEADDATA']['pre'] = " ";
+$sc_style['CONTENT_CONTENT_TABLE_INFO_POST_HEADDATA']['post'] = "";
 
 
-$CONTENT_CONTENT_TABLE = "<table class='fborder' cellpadding='0' cellspacing='0' style='width:100%;'><tr><td>
-<div style='clear:both;'>
+$CONTENT_CONTENT_TABLE = "<table class='fborder content_content_table'>
+<tr><td class='fcaption'>  
+    {CONTENT_CONTENT_TABLE_INFO_PRE_HEADDATA}
+		{CONTENT_CONTENT_TABLE_SUBHEADING}             
+		{CONTENT_CONTENT_TABLE_INFO_POST_HEADDATA}
+</td></tr>
+<tr><td >
 
 	{CONTENT_CONTENT_TABLE_INFO_PRE}
-		{CONTENT_CONTENT_TABLE_ICON}
-		{CONTENT_CONTENT_TABLE_INFO_PRE_HEADDATA}
-			{CONTENT_CONTENT_TABLE_SUBHEADING}
+		          
 			{CONTENT_CONTENT_TABLE_DATE} {CONTENT_CONTENT_TABLE_AUTHORDETAILS} {CONTENT_CONTENT_TABLE_EPICONS} {CONTENT_CONTENT_TABLE_EDITICON} {CONTENT_CONTENT_TABLE_PARENT} {CONTENT_CONTENT_TABLE_COMMENT} {CONTENT_CONTENT_TABLE_SCORE} {CONTENT_CONTENT_TABLE_REFER}
 			{CONTENT_CONTENT_TABLE_RATING}
 			{CONTENT_CONTENT_TABLE_FILE}
-		{CONTENT_CONTENT_TABLE_INFO_POST_HEADDATA}
+ 
 	{CONTENT_CONTENT_TABLE_INFO_POST}
-	<div style='clear:both;'><br /></div>
-	<table class='fborder' cellpadding='0' cellspacing='0' style='width:100%;'><tr><td class='forumheader3'>
+</td></tr> 
+<tr><td>  
+  
+  
+  
+	<table class='content_content_table2'><tr><td class='forumheader3'>
 		{CONTENT_CONTENT_TABLE_IMAGES}
 		{CONTENT_CONTENT_TABLE_SUMMARY}
 		{CONTENT_CONTENT_TABLE_TEXT}
 		{CONTENT_CONTENT_TABLE_CUSTOM_TAGS}
 		{CONTENT_CONTENT_TABLE_PAGENAMES}
 		{CONTENT_CONTENT_TABLE_PREV_PAGE}{CONTENT_CONTENT_TABLE_NEXT_PAGE}
-	</td></tr></table>
-</div>
-</td></tr></table>\n";
+	</td></tr></table> 
+</td></tr></table> 
+
+{CONTENT_SOCIAL_SHARE}";
 
 // ##### ----------------------------------------------------------------------
 
-$CONTENT_CONTENT_TABLE_CUSTOM_START = "<table style='width:100%;margin-left:0;padding-left:0;' cellspacing='0' cellpadding='0' >";
+$CONTENT_CONTENT_TABLE_CUSTOM_START = "<table class='content_content_table_custom_start' style='width:100%;margin-left:0;padding-left:0;' cellspacing='0' cellpadding='0' >";
 
 $CONTENT_CONTENT_TABLE_CUSTOM = "
 <tr>

@@ -43,7 +43,7 @@ if(!isset($CONTENT_SEARCHRESULT_TABLE_START)){
 }
 if(!isset($CONTENT_SEARCHRESULT_TABLE)){
 	$CONTENT_SEARCHRESULT_TABLE .= "
-	<table class='fborder' style='width:98%; text-align:left;margin-bottom:5px;'>
+	<table class='fborder content_searchresult_table' style='width:98%; text-align:left;margin-bottom:5px;'>
 		<tr>
 			{CONTENT_SEARCHRESULT_TABLE_ICON}
 			<td>

@@ -90,8 +90,9 @@ class content_convert{
 			if($sqlc -> db_Select("core", "*", "e107_name='pcontent' ")){
 				$row = $sqlc -> db_Fetch();
 
+				//$tmp = $eArrayStorage->ReadxArray($row['e107_value']);
 				$tmp = e107::unserialize($row['e107_value']);
-
+				
 				//replace the id value for the content_pref
 				$content_pref = array();
 				foreach($tmp as $k=>$v){
@@ -106,7 +107,8 @@ class content_convert{
 					//add new options to the preferences
 					$content_pref = $this->upgrade_1_22_prefs($content_pref);
 
-					$tmp1 = e107::serialize($content_pref, TRUE);
+					//$tmp1 = $eArrayStorage->WritexArray($content_pref);
+					$tmp1 = e107::serialize($content_pref, true);
 					$sqld -> db_Update("core", "e107_value = '{$tmp1}' WHERE e107_name = 'pcontent' ");
 				}else{
 					$upgrade=FALSE;
@@ -118,8 +120,8 @@ class content_convert{
 				while($row=$sqlc->db_Fetch()){
 
 					$id = $row['content_id'];
-					$tmp = e107::unserialize($row['content_pref']);
-
+					//$tmp = $eArrayStorage->ReadxArray($row['content_pref']);
+          $tmp = e107::unserialize($row['content_pref']);
 					//replace the id value for the content_pref
 					$l = strlen($id);
 					$content_pref = array();
@@ -135,7 +137,8 @@ class content_convert{
 					if(!isset($content_pref['content_admin_subheading'])){
 						$content_pref = $this->upgrade_1_22_prefs($content_pref);
 
-						$tmp1 = e107::serialize($content_pref, TRUE);
+						//$tmp1 = $eArrayStorage->WritexArray($content_pref);
+						$tmp1 = e107::serialize($content_pref, true);
 						$sqld -> db_Update("pcontent", "content_pref='{$tmp1}' WHERE content_id='$id' ");
 					}else{
 						$upgrade=FALSE;
@@ -209,13 +212,14 @@ class content_convert{
 			if($sqlc -> db_Select("core", "*", "e107_name='pcontent' ")){
 				$row = $sqlc -> db_Fetch();
 
-				$content_pref = e107::unserialize($row['e107_value']);
-
+				//$content_pref = $eArrayStorage->ReadxArray($row['e107_value']);
+        $content_pref = e107::unserialize($row['e107_value']);
 				//add new options to the preferences
 				if(!isset($content_pref['content_admin_subheading'])){
 					$content_pref = $this->upgrade_1_23_prefs($content_pref);
 
-					$tmp1 = e107::serialize($content_pref, TRUE);
+					//$tmp1 = $eArrayStorage->WritexArray($content_pref);
+					$tmp1 = e107::serialize($content_pref, true);
 					$sqld -> db_Update("core", "e107_value = '{$tmp1}' WHERE e107_name = 'pcontent' ");
 				}else{
 					$upgrade=FALSE;
@@ -227,13 +231,15 @@ class content_convert{
 				while($row=$sqlc->db_Fetch()){
 
 					$id = $row['content_id'];
-					$content_pref = e107::unserialize($row['content_pref']);
-
+					//$content_pref = $eArrayStorage->ReadxArray($row['content_pref']);
+          $content_pref = e107::unserialize($row['content_pref']);
+          
 					if(!isset($content_pref['content_admin_subheading'])){
 						//add new options to the preferences
 						$content_pref = $this->upgrade_1_23_prefs($content_pref);
 
-						$tmp1 = e107::serialize($content_pref, TRUE);
+						//$tmp1 = $eArrayStorage->WritexArray($content_pref);
+						$tmp1 = e107::serialize($content_pref, true);
 						$sqld -> db_Update("pcontent", "content_pref='{$tmp1}' WHERE content_id='$id' ");
 					}else{
 						$upgrade=FALSE;
@@ -280,15 +286,17 @@ class content_convert{
 			if($sqlc -> db_Select("core", "*", "e107_name='pcontent' ")){
 				$row = $sqlc -> db_Fetch();
 
-				$content_pref = e107::unserialize($row['e107_value']);
-
+				//$content_pref = $eArrayStorage->ReadxArray($row['e107_value']);
+        $content_pref = e107::unserialize($row['e107_value']);
+        
 				//update theme
 				if(strpos($content_pref['content_theme'], "{e_")!==FALSE){
 				}else{
 					$content_pref['content_theme'] = "{e_PLUGIN}content/templates/".$content_pref['content_theme']."/";
 				}
 
-				$tmp1 = e107::serialize($content_pref, TRUE);
+				//$tmp1 = $eArrayStorage->WritexArray($content_pref);
+				$tmp1 = e107::serialize($content_pref, true);
 				$sqld -> db_Update("core", "e107_value = '{$tmp1}' WHERE e107_name = 'pcontent' ");
 			}
 
@@ -297,15 +305,17 @@ class content_convert{
 				while($row=$sqlc->db_Fetch()){
 
 					$id = $row['content_id'];
-					$content_pref = e107::unserialize($row['content_pref']);
-
+					//$content_pref = $eArrayStorage->ReadxArray($row['content_pref']);
+          $content_pref = e107::unserialize($row['content_pref']);
+          
 					//update theme
 					if(strpos($content_pref['content_theme'], "{e_")!==FALSE){
 					}else{
 						$content_pref['content_theme'] = "{e_PLUGIN}content/templates/".$content_pref['content_theme']."/";
 					}
 
-					$tmp1 = e107::serialize($content_pref, TRUE);
+					//$tmp1 = $eArrayStorage->WritexArray($content_pref);
+					$tmp1 = e107::serialize($content_pref, true);
 					$sqld -> db_Update("pcontent", "content_pref='{$tmp1}' WHERE content_id='$id' ");
 				}
 			}
@@ -425,8 +435,9 @@ class content_convert{
 				}
 
 				$content_pref = $aa -> ContentDefaultPrefs($id);
-				$tmp = e107::serialize($content_pref, TRUE);
-
+				//$tmp = $eArrayStorage->WriteArray($content_pref);
+        $tmp = e107::serialize($content_pref, true);
+        
 				$sql -> db_Update($plugintable, "content_pref='$tmp' WHERE content_id='$id' ");
 		}
 
@@ -459,12 +470,13 @@ class content_convert{
 
 		//create main parent
 		function create_mainparent($name, $tot, $order){
-				global $sql, $aa, $plugintable, $tp;
+				global  $aa, $plugintable, $tp;
 				$plugintable	= "pcontent";
 
-				$sql = new db;
-				$sql -> db_Select("content", "MAX(content_id) as maxcid", "", "mode=no_where");
-				list($maxcid) = $sql -> db_Fetch();
+				$sql = e107::getDb();
+				$maxcid =  $sql -> retrieve("content", "MAX(content_id) as maxcid", "", "mode=no_where");
+				//$sql -> db_Select("content", "MAX(content_id) as maxcid", "", "mode=no_where");
+				//list($maxcid) = $sql -> db_Fetch();
 				$newid = $maxcid + $order;
 
 				// ##### STAGE 4 : INSERT MAIN PARENT FOR ARTICLE ---------------------------------------------
@@ -472,15 +484,15 @@ class content_convert{
 				if($tot > 0){
 					//if(!is_object($sql)){ $sql = new db; }
 					$sql = new db;
-					if(!$sql -> db_Select($plugintable, "content_heading", "content_heading = '".$name."' AND content_parent = '0' ")){
+					if(!$sql -> retrieve($plugintable, "content_heading", "content_heading = '".$name."' AND content_parent = '0' ")){
 						$name = $tp -> toDB($name);
 
-						$sql -> db_Insert($plugintable, "'".$newid."', '".$name."', '', '', '', '1', '', '', '', '0', '0', '0', '0', '', '".time()."', '0', '0', '', '".$order."', '0', '', '' ");
+						$sql -> insert($plugintable, "'".$newid."', '".$name."', '', '', '', '1', '', '', '', '0', '0', '0', '0', '', '".time()."', '0', '0', '', '".$order."', '0', '', '' ");
 
 						//check if row is present in the db (is it a valid insert)
 						//if(!is_object($sql2)){ $sql2 = new db; }
 						$sql2 = new db;
-						if(!$sql2 -> db_Select($plugintable, "content_id", "content_heading = '".$name."' ")){
+						if(!$sql2 -> retrieve($plugintable, "content_id", "content_heading = '".$name."' ")){
 							$message = CONTENT_ADMIN_CONVERSION_LAN_45;
 						}else{
 							$message = $name." ".CONTENT_ADMIN_CONVERSION_LAN_7."<br />";
@@ -489,8 +501,8 @@ class content_convert{
 							//select main parent id
 							$sql3 = new db;
 							//if(!is_object($sql3)){ $sql3 = new db; }
-							$sql3 -> db_Select($plugintable, "content_id", "content_heading = '".$name."' AND content_parent = '0' ");
-							list($main_id) = $sql3 -> db_Fetch();
+							$main_id = $sql3 -> retrieve($plugintable, "content_id", "content_heading = '".$name."' AND content_parent = '0' ");
+							//list($main_id) = $sql3 -> db_Fetch();
 
 							//insert default preferences
 							$this -> insert_default_prefs($main_id);

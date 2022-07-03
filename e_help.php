@@ -3,6 +3,7 @@
 if (!defined('e107_INIT')) { exit; }
 
 global $plugindir;
+$plugindir = e_PLUGIN."content/";
 require_once($plugindir."handlers/content_defines.php");
 include_lan($plugindir.'languages/'.e_LANGUAGE.'/lan_content_help.php');
 

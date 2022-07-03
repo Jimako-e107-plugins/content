@@ -49,7 +49,7 @@ if(!isset($CONTENT_CAT_TABLE_START)){
 }
 if(!isset($CONTENT_CAT_TABLE)){
 	$CONTENT_CAT_TABLE = "
-	<table class='fborder' style='width:98%; text-align:left; margin-bottom:5px;'>
+	<table class='fborder content_cat_table' style='width:98%; text-align:left; margin-bottom:5px;'>
 	<tr>
 		{CONTENT_CAT_TABLE_ICON}
 		<td class='fcaption' >{CONTENT_CAT_TABLE_HEADING} {CONTENT_CAT_TABLE_AMOUNT}</td>
@@ -99,7 +99,7 @@ $sc_style['CONTENT_CAT_LIST_TABLE_INFO_POST']['post'] = "</td></tr>";
 // ##### CONTENT CAT_LIST -----------------------------------------------------
 if(!isset($CONTENT_CAT_LIST_TABLE)){
 	$CONTENT_CAT_LIST_TABLE = "
-	<table class='fborder' style='width:98%; text-align:left; margin-bottom:10px;'>
+	<table class='fborder content_cat_list_table''>
 	<tr>
 		{CONTENT_CAT_LIST_TABLE_ICON}
 		<td class='fcaption'>{CONTENT_CAT_LIST_TABLE_HEADING} {CONTENT_CAT_LIST_TABLE_AMOUNT}</td>
@@ -133,7 +133,7 @@ if(!isset($CONTENT_CAT_LISTSUB_TABLE_START)){
 }
 if(!isset($CONTENT_CAT_LISTSUB_TABLE)){
 	$CONTENT_CAT_LISTSUB_TABLE = "
-	<table class='fborder' style='width:98%; text-align:left; margin-bottom:5px;'>
+	<table class='fborder content_cat_listsub_table' style='width:98%; text-align:left; margin-bottom:5px;'>
 	<tr>
 		{CONTENT_CAT_LISTSUB_TABLE_ICON}
 		<td class='fcaption'>{CONTENT_CAT_LISTSUB_TABLE_HEADING} {CONTENT_CAT_LISTSUB_TABLE_AMOUNT}</td>

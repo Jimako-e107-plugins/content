@@ -35,7 +35,7 @@ class popup{
 	// clicking the popup will use the js functions in the included js file to popup the image
 	// $pp -> popup($oSrc, $oSrcThumb, $oIconWidth, $oMaxWidth, $oTitle, $oText)
 
-	function popup($image = null, $thumb = null, $iconwidth='100', $maxwidth='', $title = null, $text = null){
+	function popup($image, $thumb, $iconwidth='100', $maxwidth='', $title, $text){
 			global $tp;
 			//$image	:	full path to the large image you want to popup
 			//$thumb	:	full path to the small image to show on screen

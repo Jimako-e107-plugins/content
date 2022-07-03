@@ -37,7 +37,7 @@ if(!isset($CONTENT_SCORE_TABLE_START)){
 }
 if(!isset($CONTENT_SCORE_TABLE)){
 	$CONTENT_SCORE_TABLE = "
-	<table class='fborder' style='width:98%; text-align:left; margin-bottom:5px;'>
+	<table class='fborder content_score_table' style='width:98%; text-align:left; margin-bottom:5px;'>
 	<tr>
 		{CONTENT_SCORE_TABLE_ICON}
 		<td class='fcaption'>{CONTENT_SCORE_TABLE_HEADING}</td>

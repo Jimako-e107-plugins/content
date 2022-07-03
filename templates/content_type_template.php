@@ -34,7 +34,7 @@ $sc_style['CONTENT_TYPE_TABLE_LINK']['post'] = "</span>";
 // ##### CONTENT TYPE LIST --------------------------------------------------
 if(!isset($CONTENT_TYPE_TABLE_START)){
 	$CONTENT_TYPE_TABLE_START = "
-	<table class='fborder' style='width:98%; text-align:left;'>\n";
+	<table class='fborder content_type_table_start' style='width:98%; text-align:left;'>\n";
 }
 if(!isset($CONTENT_TYPE_TABLE)){
 	$CONTENT_TYPE_TABLE = "

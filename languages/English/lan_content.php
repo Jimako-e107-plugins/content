@@ -63,7 +63,7 @@ define("CONTENT_ADMIN_DATE_LAN_16", "end date");
 define("CONTENT_ADMIN_DATE_LAN_17", "You can specify a start date for this content item. If you use a date in the future the content item will be visible from that point onward. If you do not need a specific starting date, you can just leave these fields as they are.");
 define("CONTENT_ADMIN_DATE_LAN_18", "you can specify an end date for this content item. With the end date you can specify until which point in time the content item needs to be visible. If you do not need an end time for this content item, you can just leave the fields as they are.");
 
-define("CONTENT_PAGETITLE_LAN_0", "Content");
+define("CONTENT_PAGETITLE_LAN_0", "Tutorials");
 define("CONTENT_PAGETITLE_LAN_1", "Main");
 define("CONTENT_PAGETITLE_LAN_2", "Recent");
 define("CONTENT_PAGETITLE_LAN_3", "Category");

@@ -12,5 +12,6 @@
 
 define("CONT_FP_1", "Content category");
 define("CONT_FP_2", "main page");
-
+define("CONT_FP_3", "Content");
+define("CONT_FP_4", "Content page");
 ?>

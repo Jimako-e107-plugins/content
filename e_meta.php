@@ -18,9 +18,22 @@
 */
 if (!defined('e107_INIT')) { exit; }
 
+if(defined("e_URL_LEGACY")) {
+
+   if (strpos(e_URL_LEGACY, 'content.php') !== false)     {
+    define("e_PAGE", 'content.php');
+   }
+   elseif (strpos(e_URL_LEGACY, 'content_manager.php') !== false)     {
+     define("e_PAGE", 'content_manager.php');
+   }
+	 
+ 
+
+}
+
 if (substr(e_PAGE, 0, 7) != 'content') return;
 
-echo "<script type='text/javascript' src='".e_FILE."popup.js'></script>\n";
+echo "<script type='text/javascript' src='".e_PLUGIN."content/popup/popup.js'></script>\n";
 
 if(e_QUERY){
 	$qs = explode(".", e_QUERY);
